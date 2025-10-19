@@ -1,30 +1,37 @@
-# Programsko inženjerstvo
+# SUSJEDI
 
-> Ime projekta u naslovu ima cilj opisati namjenu projekta te pomoći u podizanju početnog interesa za projekt prezentirajući osnovnu svrhu projekta.
-> Isključivo ovisi o Vama!
-> 
-> Naravno, nijedan predložak nije idealan za sve projekte jer su potrebe i ciljevi različiti. Ne bojte se naglasiti Vaš cilj u ovoj početnoj stranici projekta, podržat ćemo ga bez obzira usredotočili se Vi više na tenologiju ili marketing.
-> 
-> Zašto ovaj dokument? Samo manji dio timova je do sada propoznao potrebu (a i meni je lakše pratiti Vaš rad).  
+Aplikacija podrške aktivnostima predstavnika stanara koja olakšava upravljanje zajedničkim prostorima.  
 
 # Opis projekta
 Ovaj projekt je reultat timskog rada u sklopu projeknog zadatka kolegija [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz) na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu. 
 
-Kratko opisati cilj Vašeg projekta. Vaša motivacija?  (Napomena: odgovor nije »Zato što je to bio zadatak i nismo imali ideje za drugo.«). Koji problem rješavate?
-> Obzirom da je ovo zadani projekt navedite i što želite/jeste novo  naučili.
-
-> Dobro izrađen opis omogućuje vam da pokažete svoj rad drugim programerima, kao i potencijalnim poslodavcima. Ne samo da prvi dojam na stranici opisa često razlikuje dobar projekt od lošeg projekta već i predstavlja dobru praksu koju morate savladati.
+Cilj projekta je olakšati komunikaciju između predstavnika stanara i suvlasnika u svrhu transparentnog upravljanja zajedničkim prostorima i direktnog uključivanja suvlasnika u donošenje odluka unutar svoje stambene zgrade. Također, želja našeg tima je i postići izvrsno razumijevanje dosadašnjeg procesa donošenja odluka unutar zgrade i kako taj proces optimizirati izradom ove aplikacije.
 
 # Funkcijski zahtjevi
-> Navedite ključne zahtjeve Vašeg projekta.
+ - autentifikacija korisnika 
+ - kreiranje/uređivanje novog sastanka
+ - dodavanje i uređivanje točaka dnevnog reda s pravnim/bez pravnog učinka
+ - objavljivanje sastanka
+ - uređivanje stanja sastanka
+ - dodavanje zaključaka za točke dnevnog reda
+ - arhiviranje sastanaka
+ - pregled svih objavljenih sastanaka i zaključaka
+ - označavanje namjere sudjelovanja na sastanku
+ - integracija sa StanBlog aplikacijom
+ - e-mail sustav obavijesti
+ - postavljanje ograničenja za svaku ulogu korisnika
 
 
 # Tehnologije
 
 #Instalcija
 # Članovi tima 
-> Popis članova tima/linkovi/ glavni doprinos
->
+ - Petar Ćurić (https://github.com/5arCuric)
+ - Andro Gabaj (https://github.com/AndroGabaj)
+ - Matej Glavaš (https://github.com/matej-glavas)
+ - Ante Ivančić
+ - Filip Matijević
+ - Jakov Schramadei (https://github.com/jakovsch-fer)
 
 # Kontribucije
 >Pravila ovise o organizaciji tima i su često izdvojena u CONTRIBUTING.md
