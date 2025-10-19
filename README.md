@@ -3,7 +3,7 @@
 Aplikacija podrške aktivnostima predstavnika stanara koja olakšava upravljanje zajedničkim prostorima.  
 
 # Opis projekta
-Ovaj projekt je reultat timskog rada u sklopu projeknog zadatka kolegija [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz) na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu. 
+Ovaj projekt je rezultat timskog rada u sklopu projeknog zadatka kolegija [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz) na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu. 
 
 Cilj projekta je olakšati komunikaciju između predstavnika stanara i suvlasnika u svrhu transparentnog upravljanja zajedničkim prostorima i direktnog uključivanja suvlasnika u donošenje odluka unutar svoje stambene zgrade. Također, želja našeg tima je i postići izvrsno razumijevanje dosadašnjeg procesa donošenja odluka unutar zgrade i kako taj proces optimizirati izradom ove aplikacije.
 
