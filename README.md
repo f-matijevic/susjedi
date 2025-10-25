@@ -24,7 +24,6 @@ Cilj projekta je olakšati komunikaciju između predstavnika stanara i suvlasnik
 # Tehnologije
 React + Spring Boot, PostgreSQL, OAuth 2.0
 
-#Instalcija
 # Članovi tima 
  - Petar Ćurić (https://github.com/5arCuric)
  - Andro Gabaj (https://github.com/AndroGabaj)
