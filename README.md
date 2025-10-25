@@ -21,20 +21,18 @@ Cilj projekta je olakšati komunikaciju između predstavnika stanara i suvlasnik
  - e-mail sustav obavijesti
  - postavljanje ograničenja za svaku ulogu korisnika
 
-
 # Tehnologije
+React + Spring Boot, PostgreSQL, OAuth 2.0
 
 #Instalcija
 # Članovi tima 
  - Petar Ćurić (https://github.com/5arCuric)
  - Andro Gabaj (https://github.com/AndroGabaj)
  - Matej Glavaš (https://github.com/matej-glavas)
- - Ante Ivančić
+ - Ante Ivančić (https://github.com/AnteIvancic2)
  - Filip Matijević
  - Jakov Schramadei (https://github.com/jakovsch-fer)
 
-# Kontribucije
->Pravila ovise o organizaciji tima i su često izdvojena u CONTRIBUTING.md
 
 
 
