@@ -7,24 +7,24 @@ Ovaj projekt je rezultat timskog rada u sklopu projeknog zadatka kolegija [Progr
 
 Cilj projekta je olakšati komunikaciju između predstavnika stanara i suvlasnika u svrhu transparentnog upravljanja zajedničkim prostorima i direktnog uključivanja suvlasnika u donošenje odluka unutar svoje stambene zgrade. Također, želja našeg tima je i postići izvrsno razumijevanje dosadašnjeg procesa donošenja odluka unutar zgrade i kako taj proces optimizirati izradom ove aplikacije.
 
-# Funkcijski zahtjevi
-F-001 kreirati korisničke račune predstavnika suvlasnika i suvlasnika 
-F-002 uređivati podatke postojećih korisnika
-F-003 dodijeliti ili promijeniti uloge korisnika
-F-004 vidjeti popis svih korisnika
-F-005 kreiranje/uređivanje novog sastanka
-F-006 dodavanje i uređivanje točaka dnevnog reda s pravnim/bez pravnog učinka
-F-007 objavljivanje sastanka
-F-008 uređivanje stanja sastanka
-F-009 dodavanje zaključaka za točke dnevnog reda
-F-010 arhiviranje sastanaka
-F-011 pregled svih objavljenih sastanaka i zaključaka
-F-012 pregledavati arhivirane sastanke i njihove zaključke
-F-013 označavanje namjere sudjelovanja na sastanku
-F-014 sudjelovati u glasanju za točke koje imaju pravni učinak 
-F-015 integracija sa StanBlog aplikacijom
-F-016 e-mail sustav obavijesti
-F-017 postavljanje ograničenja za svaku ulogu korisnika
+# Funkcijski zahtjevi  
+F-001 kreirati korisničke račune predstavnika suvlasnika i suvlasnika  
+F-002 uređivati podatke postojećih korisnika  
+F-003 dodijeliti ili promijeniti uloge korisnika  
+F-004 vidjeti popis svih korisnika  
+F-005 kreiranje/uređivanje novog sastanka  
+F-006 dodavanje i uređivanje točaka dnevnog reda s pravnim/bez pravnog učinka  
+F-007 objavljivanje sastanka  
+F-008 uređivanje stanja sastanka  
+F-009 dodavanje zaključaka za točke dnevnog reda  
+F-010 arhiviranje sastanaka 
+F-011 pregled svih objavljenih sastanaka i zaključaka  
+F-012 pregledavati arhivirane sastanke i njihove zaključke  
+F-013 označavanje namjere sudjelovanja na sastanku  
+F-014 sudjelovati u glasanju za točke koje imaju pravni učinak  
+F-015 integracija sa StanBlog aplikacijom  
+F-016 e-mail sustav obavijesti  
+F-017 postavljanje ograničenja za svaku ulogu korisnika  
 
 
 # Tehnologije
