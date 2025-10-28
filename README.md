@@ -26,6 +26,23 @@ F-015 integracija sa StanBlog aplikacijom
 F-016 e-mail sustav obavijesti  
 F-017 postavljanje ograničenja za svaku ulogu korisnika  
 
+# Ostali zahtjevi  
+podrška za prikaz na desktop i mobilnim uređajima putem web preglednika  
+korisničko sučelje dostupno na hrvatskom jeziku  
+brz odziv sustava na korisničke zahtjeve  
+podrška za veći broj istovremenih korisnika  
+sigurno pohranjene(hashirane) lozinke  
+zaštita pohranjenih podataka   
+jednostavno i intuitivno korisničko sučelje  
+korištenje vanjskog servisa za autentifikaciju  
+
+# Dionici sustava:  
+Administrator  
+Predstavnik suvlasnika  
+Suvlasnik  
+Naručitelj  
+Razvojni tim  
+
 
 # Tehnologije
 React + Spring Boot, PostgreSQL, OAuth 2.0
