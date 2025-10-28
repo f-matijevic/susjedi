@@ -8,40 +8,61 @@ Ovaj projekt je rezultat timskog rada u sklopu projeknog zadatka kolegija [Progr
 Cilj projekta je olakšati komunikaciju između predstavnika stanara i suvlasnika u svrhu transparentnog upravljanja zajedničkim prostorima i direktnog uključivanja suvlasnika u donošenje odluka unutar svoje stambene zgrade. Također, želja našeg tima je i postići izvrsno razumijevanje dosadašnjeg procesa donošenja odluka unutar zgrade i kako taj proces optimizirati izradom ove aplikacije.
 
 # Funkcijski zahtjevi  
-F-001 kreirati korisničke račune predstavnika suvlasnika i suvlasnika  
-F-002 uređivati podatke postojećih korisnika  
-F-003 dodijeliti ili promijeniti uloge korisnika  
-F-004 vidjeti popis svih korisnika  
-F-005 kreiranje/uređivanje novog sastanka  
-F-006 dodavanje i uređivanje točaka dnevnog reda s pravnim/bez pravnog učinka  
-F-007 objavljivanje sastanka  
-F-008 uređivanje stanja sastanka  
-F-009 dodavanje zaključaka za točke dnevnog reda  
-F-010 arhiviranje sastanaka 
-F-011 pregled svih objavljenih sastanaka i zaključaka  
-F-012 pregledavati arhivirane sastanke i njihove zaključke  
-F-013 označavanje namjere sudjelovanja na sastanku  
-F-014 sudjelovati u glasanju za točke koje imaju pravni učinak  
-F-015 integracija sa StanBlog aplikacijom  
-F-016 e-mail sustav obavijesti  
-F-017 postavljanje ograničenja za svaku ulogu korisnika  
+ - F-001 kreirati korisničke račune predstavnika suvlasnika i suvlasnika  
+ - F-002 uređivati podatke postojećih korisnika  
+ - F-003 dodijeliti ili promijeniti uloge korisnika  
+ - F-004 vidjeti popis svih korisnika  
+ - F-005 kreiranje/uređivanje novog sastanka  
+ - F-006 dodavanje i uređivanje točaka dnevnog reda s pravnim/bez pravnog učinka  
+ - F-007 objavljivanje sastanka  
+ - F-008 uređivanje stanja sastanka  
+ - F-009 dodavanje zaključaka za točke dnevnog reda  
+ - F-010 arhiviranje sastanaka 
+ - F-011 pregled svih objavljenih sastanaka i zaključaka  
+ - F-012 pregledavati arhivirane sastanke i njihove zaključke  
+ - F-013 označavanje namjere sudjelovanja na sastanku  
+ - F-014 sudjelovati u glasanju za točke koje imaju pravni učinak  
+ - F-015 integracija sa StanBlog aplikacijom  
+ - F-016 e-mail sustav obavijesti  
+ - F-017 postavljanje ograničenja za svaku ulogu korisnika  
 
 # Ostali zahtjevi  
-podrška za prikaz na desktop i mobilnim uređajima putem web preglednika  
-korisničko sučelje dostupno na hrvatskom jeziku  
-brz odziv sustava na korisničke zahtjeve  
-podrška za veći broj istovremenih korisnika  
-sigurno pohranjene(hashirane) lozinke  
-zaštita pohranjenih podataka   
-jednostavno i intuitivno korisničko sučelje  
-korištenje vanjskog servisa za autentifikaciju  
+ - podrška za prikaz na desktop i mobilnim uređajima putem web preglednika  
+ - korisničko sučelje dostupno na hrvatskom jeziku  
+ - brz odziv sustava na korisničke zahtjeve  
+ - podrška za veći broj istovremenih korisnika  
+ - sigurno pohranjene(hashirane) lozinke  
+ - zaštita pohranjenih podataka   
+ - jednostavno i intuitivno korisničko sučelje  
+ - korištenje vanjskog servisa za autentifikaciju  
 
 # Dionici sustava:  
-Administrator  
-Predstavnik suvlasnika  
-Suvlasnik  
-Naručitelj  
-Razvojni tim  
+ - Administrator  
+ - Predstavnik suvlasnika  
+ - Suvlasnik  
+ - Naručitelj  
+ - Razvojni tim  
+# Aktori i njihovi funkcionalni zahtjevi  
+A-1 Administrator (inicijator) može:  
+ - (F-001) kreirati korisničke račune predstavnika suvlasnika i suvlasnika  
+ - (F-002) uređivati podatke postojećih korisnika  
+ - (F-003) dodijeliti ili promijeniti uloge korisnika  
+ - (F-004) vidjeti popis svih korisnika  
+
+A-2 Predstavnik suvlasnika (inicijator) može:  
+ - (F-005) kreirati novi sastanak s osnovnim informacijama (naslov, namjera, vrijeme, mjesto)  
+ - (F-006) dodavati točke dnevnog reda sastanka (s ili bez pravnog učinka)  
+ - (F-007) objaviti sastanak (suvlasnici dobivaju obavijest na adresu elektroničke pošte)  
+ - (F-008) nakon održavanja označiti sastanak kao „Obavljen“  
+ - (F-009) svakoj od točaka dnevnog reda predstavnik može dodati zaključak.  
+ - (F-008) označiti zaključke pravnih točaka kao „Izglasan“ ili „Odbijen“  
+ - (F-010) može arhivirati sastanak (time prelazi u stanje „Arhiviran“)  
+
+A-3 Suvlasnik (sudionik) može:  
+ - (F-011) pregledavati sve objavljene sastanke i njihove dnevne redove  
+ - (F-012) pregledavati arhivirane sastanke i njihove zaključke  
+ - (F-013) označiti namjeru sudjelovanja na sastanku  
+ - (F-014) sudjelovati u glasanju za točke koje imaju pravni učinak  
 
 
 # Tehnologije
