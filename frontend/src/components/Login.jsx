@@ -5,10 +5,39 @@ import userPicture from "../assets/userPicture.svg";
 import googleIcon from "../assets/googleIcon.png";
 
 export default function Login(){
-    
-     const handleSubmit = (e) => {
+
+    const [formData, setFormData] = useState({
+        email: "",
+        lozinka: ""
+    });
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.id]: e.target.value
+        });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Pokušaj prijave!");
+        try {
+            const response = await fetch("http://localhost:8080/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+            const data = await response.json();
+            console.log(data.message);
+
+            if (data.message === "Prijava uspješna!") {
+                alert("Prijava uspješna!");
+            } else {
+                alert(data.message);
+            }
+
+        } catch (error) {
+            console.error("Greška:", error);
+        }
     };
 
     return (
@@ -22,6 +51,7 @@ export default function Login(){
                            placeholder="ime.prezime@gmail.com"
                             id="email"
                             required
+                            onChange={handleChange}
                     ></input>
                     <label htmlFor="lozinka">Lozinka:</label>
                     <input
@@ -29,6 +59,7 @@ export default function Login(){
                         id="lozinka"
                         placeholder="*******"
                         required
+                        onChange={handleChange}
                     />
                     <button type="submit" className="LoginButton">
                         Prijavi se
