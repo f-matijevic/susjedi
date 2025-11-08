@@ -3,6 +3,9 @@ package hr.fer.susjedi;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -15,10 +18,12 @@ public class SignUpController {
         this.userRepository = userRepository;
     }
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
+    public Map<String, String> register(@RequestBody RegisterRequest request) {
+        Map<String, String> response = new HashMap<>();
 
         if (userRepository.existsByEmail(request.email)) {
-            return "Email je već registriran!";
+            response.put("error", "Email je već registriran!");
+            return response;
         }
 
         UserEntity k = new UserEntity();
@@ -28,8 +33,7 @@ public class SignUpController {
         k.role = "SUVLASNIK";
 
         userRepository.save(k);
-        System.out.println("Uspjeh");
-        System.out.println(k.password);
-        return "Korisnik " + request.Name + " uspješno registriran!";
+        response.put("success", "Korisnik " + request.Name + " uspješno registriran!");
+        return response;
     }
 }
