@@ -1,4 +1,4 @@
-package hr.fer.susjedi;
+package hr.fer.susjedi.model.request;
 
 public class LoginRequest {
     public String email;

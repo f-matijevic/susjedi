@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import "../styles/Login.css";
 import userPicture from "../assets/userPicture.svg";
@@ -10,6 +10,8 @@ export default function Login(){
         email: "",
         lozinka: ""
     });
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({
@@ -29,8 +31,9 @@ export default function Login(){
             const data = await response.json();
             console.log(data.message);
 
-            if (data.message === "Prijava uspješna!") {
-                alert("Prijava uspješna!");
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+                navigate("/home");
             } else {
                 alert(data.message);
             }

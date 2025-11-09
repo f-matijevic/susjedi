@@ -1,5 +1,9 @@
-package hr.fer.susjedi;
+package hr.fer.susjedi.controller;
 
+import hr.fer.susjedi.model.entity.User;
+import hr.fer.susjedi.model.request.LoginRequest;
+import hr.fer.susjedi.repository.UserRepository;
+import hr.fer.susjedi.security.JwtService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
@@ -10,15 +14,17 @@ import java.util.Map;
 public class LoginController {
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public LoginController(UserRepository userRepository) {
+    public LoginController(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody LoginRequest request) {
-        UserEntity user = userRepository.findByEmail(request.email);
+        User user = userRepository.findByEmail(request.email);
         if (user == null) {
             return Map.of("message", "Korisnik ne postoji!");
         }
@@ -27,6 +33,12 @@ public class LoginController {
             return Map.of("message", "Pogrešna lozinka!");
         }
 
-        return Map.of("message", "Prijava uspješna!", "username", user.username);
+        String token = jwtService.generateToken(user.email);
+
+        return Map.of(
+                "message", "Prijava uspješna!",
+                "username", user.username,
+                "token", token
+        );
     }
 }

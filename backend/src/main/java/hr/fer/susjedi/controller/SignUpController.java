@@ -1,5 +1,8 @@
-package hr.fer.susjedi;
+package hr.fer.susjedi.controller;
 
+import hr.fer.susjedi.model.entity.User;
+import hr.fer.susjedi.model.request.RegisterRequest;
+import hr.fer.susjedi.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +29,7 @@ public class SignUpController {
             return response;
         }
 
-        UserEntity k = new UserEntity();
+        User k = new User();
         k.username = request.Name;
         k.email = request.email;
         k.password = passwordEncoder.encode(request.lozinka);

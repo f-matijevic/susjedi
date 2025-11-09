@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import "../styles/SignUp.css";
-import userPicture from "../assets/userPicture.svg";
 import googleIcon from "../assets/googleIcon.png";
-import { Link } from "react-router-dom";
 
 export default function SignUp(){
 

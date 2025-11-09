@@ -1,10 +1,10 @@
-package hr.fer.susjedi;
+package hr.fer.susjedi.model.entity;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class UserEntity {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
