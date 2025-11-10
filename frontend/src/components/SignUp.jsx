@@ -7,7 +7,8 @@ export default function SignUp(){
     const [formData, setFormData] = useState({
         Name: "",
         email: "",
-        lozinka: ""
+        lozinka: "",
+        role: ""
     });
 
     const handleChange = (e) => {
@@ -43,16 +44,22 @@ export default function SignUp(){
                     <label htmlFor="Name">Korisničko ime</label>
                     <input type="text"
                            placeholder="HrvojeHorvat"
-                            id="Name"
-                            required
-                            onChange={handleChange}
+                           id="Name"
+                           required
+                           onChange={handleChange}
                     ></input>
+                    <label htmlFor="role">Uloga</label>
+                    <select id="role" required value={formData.role} onChange={handleChange}>
+                        <option value="" disabled>-- Odaberite ulogu --</option>
+                        <option value="SUVLASNIK">Suvlasnik</option>
+                        <option value="PREDSTAVNIK">Predstavnik suvlasnika</option>
+                    </select>
                     <label htmlFor="email">Email</label>
                     <input type="email"
                            placeholder="hrvoje.horvat@gmail.com"
-                            id="email"
-                            required
-                            onChange={handleChange}
+                           id="email"
+                           required
+                           onChange={handleChange}
                     ></input>
                     <label htmlFor="lozinka">Lozinka</label>
                     <input

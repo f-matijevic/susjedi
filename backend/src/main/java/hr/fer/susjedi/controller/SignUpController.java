@@ -33,8 +33,7 @@ public class SignUpController {
         k.setUsername(request.Name);
         k.setEmail(request.email);
         k.setPassword(passwordEncoder.encode(request.lozinka));
-        k.setRole("SUVLASNIK");
-
+        k.setRole(String.valueOf(request.role));
         userRepository.save(k);
         response.put("success", "Korisnik " + request.Name + " uspješno registriran!");
         return response;
