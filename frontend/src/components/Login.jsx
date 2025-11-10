@@ -71,13 +71,15 @@ export default function Login(){
                 <p className="Ulogiranje">
                     Nemate račun? 
                     <Link to="/SignUp"> Registrirajte se.</Link>
-                </p> 
+                </p>
                 <div className="LoginGoogle">
-                    <img    id="googleImage"
-                            src={googleIcon}
-                            alt="Google"
-                    />
-                    <button className="google-button">
+                    <img id="googleImage" src={googleIcon} alt="Google"/>
+                    <button
+                        className="google-button"
+                        onClick={() => {
+                            window.location.href = "http://localhost:8080/oauth2/authorization/google";
+                        }}
+                    >
                         Prijavite se pomoću Google računa
                     </button>
                 </div>

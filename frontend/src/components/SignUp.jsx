@@ -42,7 +42,7 @@ export default function SignUp(){
                 <form className="formObrazac" onSubmit={handleSubmit}>
                     <label htmlFor="Name">Korisničko ime</label>
                     <input type="text"
-                           placeholder="Hrvoje"
+                           placeholder="HrvojeHorvat"
                             id="Name"
                             required
                             onChange={handleChange}
@@ -68,14 +68,20 @@ export default function SignUp(){
                     <button type="submit" className="LoginButton">
                         Registriraj se
                     </button>
-                </form> 
-                
+                </form>
+
                 <div className="LoginGoogle">
-                    <img    id="googleImage"
-                            src={googleIcon}
-                            alt="Google"
+                    <img
+                        id="googleImage"
+                        src={googleIcon}
+                        alt="Google"
                     />
-                    <button className="google-button">
+                    <button
+                        className="google-button"
+                        onClick={() => {
+                            window.location.href = "http://localhost:8080/oauth2/authorization/google";
+                        }}
+                    >
                         Registrirajte se pomoću Google računa
                     </button>
                 </div>

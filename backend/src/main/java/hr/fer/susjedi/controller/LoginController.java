@@ -7,6 +7,7 @@ import hr.fer.susjedi.security.JwtService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -24,20 +25,20 @@ public class LoginController {
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody LoginRequest request) {
-        User user = userRepository.findByEmail(request.email);
-        if (user == null) {
+        Optional<User> user = userRepository.findByEmail(request.email);
+        if (user.isEmpty()) {
             return Map.of("message", "Korisnik ne postoji!");
         }
 
-        if (!passwordEncoder.matches(request.lozinka, user.password)) {
+        if (!passwordEncoder.matches(request.lozinka, user.get().getPassword())) {
             return Map.of("message", "Pogrešna lozinka!");
         }
 
-        String token = jwtService.generateToken(user.email);
+        String token = jwtService.generateToken(user.orElse(null));
 
         return Map.of(
                 "message", "Prijava uspješna!",
-                "username", user.username,
+                "username", user.get().getUsername(),
                 "token", token
         );
     }

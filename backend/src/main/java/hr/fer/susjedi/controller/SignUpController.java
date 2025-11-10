@@ -30,10 +30,10 @@ public class SignUpController {
         }
 
         User k = new User();
-        k.username = request.Name;
-        k.email = request.email;
-        k.password = passwordEncoder.encode(request.lozinka);
-        k.role = "SUVLASNIK";
+        k.setUsername(request.Name);
+        k.setEmail(request.email);
+        k.setPassword(passwordEncoder.encode(request.lozinka));
+        k.setRole("SUVLASNIK");
 
         userRepository.save(k);
         response.put("success", "Korisnik " + request.Name + " uspješno registriran!");
