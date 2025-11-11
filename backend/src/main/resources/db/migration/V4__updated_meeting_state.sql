@@ -1,0 +1,8 @@
+ALTER TABLE meetings ALTER COLUMN state DROP DEFAULT;
+
+ALTER TABLE meetings
+ALTER COLUMN state TYPE VARCHAR(20)
+    USING state::text;
+
+ALTER TABLE meetings
+    ALTER COLUMN state SET DEFAULT 'PLANIRAN';

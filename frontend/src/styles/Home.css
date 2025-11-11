@@ -1,85 +1,112 @@
-body{
-    background-color: rgb(122, 196, 196);
-}
-.LoginPage{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-#Naslov{
-    color: rgb(19, 19, 79);
-    text-align: center;
-    font: bold;
-    font-size: 3rem;
-}
-.LoginContainer{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: white;
-    border-style: solid;
-    border-color: white;
-    box-shadow: 3px;
-    border-radius: 5%;
-    width: 400px;
-    height: 500px;
+
+:root {
+    --primary-color: #3a7bd5;
+    --primary-gradient: linear-gradient(135deg, #3a7bd5, #00d2ff);
+    --text-color: #2c3e50;
+    --bg-color: #f7f9fc;
+    --card-bg: #ffffff;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --radius: 16px;
+    --transition: all 0.25s ease;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    text-align: left;
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
-label{
-    font-size: 1.2rem;
-    margin-top: 10px;
-}
-input{
-    display: block;
-    border-radius: 3%;
-    border-style:groove;
-    border-color: gray;
-    font-size: 0.9rem;
-    padding: 10px;
-    width: 300px;
-    box-sizing: border-box;
-}
-.LoginButton{
-    background-color: rgb(41, 41, 41);
+
+.home-header {
+    background: var(--primary-gradient);
     color: white;
-    font-size: 1.2rem;
-    margin-top: 10px;
-    height: 50px;
-}
-.LoginButton:hover{
-    background-color: rgb(66, 66, 66);;
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow);
 }
 
-.LoginGoogle{
+.header-content {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 5px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
-.google-button{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 20px;
-    border-color: gray;
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.btn-logout {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
     border: none;
-    font-size: 0.9rem;
-    background-color: rgb(129, 175, 222);
-    height: 45px;
-    font-weight: bold;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
 }
-.google-button:hover{
-    background-color: rgb(187, 219, 250);
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
-#googleImage{
-    width: 60px;
-    height: 60px;
+
+.home-main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 3rem 1rem;
+    min-height: calc(100vh - 80px);
 }
+
+.content-wrapper {
+    max-width: 900px;
+    width: 100%;
+}
+
+.action-cards {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.action-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem 1.5rem;
+    width: 260px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    transform: translateY(0);
+}
+
+.action-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.action-card.primary {
+    border-top: 6px solid #3a7bd5;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #3a7bd5;
+}
+
+.action-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+}
+
+.action-card p {
+    font-size: 0.95rem;
+    color: #5f6c7b;
+}
+
