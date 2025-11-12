@@ -5,6 +5,7 @@ WORKDIR /app
 
 # Kopiraj cijeli backend u container
 COPY . .
+RUN chmod +x mvnw
 
 # Preuzmi dependencies offline
 RUN ./mvnw dependency:go-offline -B
