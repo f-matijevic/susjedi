@@ -1,17 +1,13 @@
-# Koristi Java 21
-FROM eclipse-temurin:21-jdk-alpine
+# Koristi Maven + Java 21
+FROM maven:3.9.9-eclipse-temurin-21
 
 WORKDIR /app
 
-# Kopiraj cijeli backend u container
-COPY . .
-RUN chmod +x mvnw
-
-# Preuzmi dependencies offline
-RUN ./mvnw dependency:go-offline -B
+# Kopiraj cijeli backend
+COPY backend ./
 
 # Buildaj aplikaciju
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 EXPOSE 8080
 
