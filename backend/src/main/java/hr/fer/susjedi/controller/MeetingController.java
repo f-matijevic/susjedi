@@ -18,7 +18,6 @@ import java.util.List;
 @RequestMapping("/api/meetings")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class MeetingController {
 
     private final MeetingService meetingService;

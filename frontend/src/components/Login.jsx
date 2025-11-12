@@ -5,7 +5,7 @@ import userPicture from "../assets/userPicture.svg";
 import googleIcon from "../assets/googleIcon.png";
 
 export default function Login(){
-
+    const API_URL = import.meta.env.VITE_API_URL;
     const [formData, setFormData] = useState({
         email: "",
         lozinka: ""
@@ -23,7 +23,7 @@ export default function Login(){
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:8080/api/login", {
+            const response = await fetch(`${API_URL}/api/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -77,7 +77,7 @@ export default function Login(){
                     <button
                         className="google-button"
                         onClick={() => {
-                            window.location.href = "http://localhost:8080/oauth2/authorization/google";
+                            window.location.href = `${API_URL}/oauth2/authorization/google`;
                         }}
                     >
                         Prijavite se pomoću Google računa

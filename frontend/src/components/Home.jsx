@@ -7,6 +7,7 @@ function Home() {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [meetings, setMeetings] = useState([]);
+    const API_URL = import.meta.env.VITE_API_URL;
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -29,7 +30,7 @@ function Home() {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/api/meetings/my', {
+            const response = await fetch(`${API_URL}/api/meetings/my`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -63,7 +64,7 @@ function Home() {
                 location: meetingData.location
             };
 
-            const response = await fetch('http://localhost:8080/api/meetings', {
+            const response = await fetch(`${API_URL}/api/meetings`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

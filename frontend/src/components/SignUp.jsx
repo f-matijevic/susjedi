@@ -3,7 +3,7 @@ import "../styles/SignUp.css";
 import googleIcon from "../assets/googleIcon.png";
 
 export default function SignUp(){
-
+    const API_URL = import.meta.env.VITE_API_URL;
     const [formData, setFormData] = useState({
         Name: "",
         email: "",
@@ -22,7 +22,7 @@ export default function SignUp(){
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:8080/api/register", {
+            const response = await fetch(`${API_URL}/api/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -86,7 +86,7 @@ export default function SignUp(){
                     <button
                         className="google-button"
                         onClick={() => {
-                            window.location.href = "http://localhost:8080/oauth2/authorization/google";
+                            window.location.href = `${API_URL}/oauth2/authorization/google`;
                         }}
                     >
                         Registrirajte se pomoću Google računa
