@@ -1,0 +1,99 @@
+body{
+    background-color: rgb(122, 196, 196);
+}
+.LoginPage{
+     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#Naslov{
+    color: rgb(19, 19, 79);
+    text-align: center;
+    font: bold;
+    font-size: 3rem;
+}
+.LoginContainer{
+     display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border-style: solid;
+    border-color: white;
+    box-shadow: 3px;
+    border-radius: 5%;
+    width: 400px;
+    height: 500px;
+}
+.login-avatar{
+    padding-bottom: 2px;
+    font-size: 5em;
+    border-radius: 50%;
+}
+.login-avatar img {
+  width: 120px;
+  height: 120px;
+  display: block;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+label{
+    font-size: 1.2rem; 
+    margin-top: 10px;
+}
+input{
+    display: block;
+    border-radius: 3%;
+    border-style:groove;
+    border-color: gray;
+    font-size: 0.9rem; 
+    padding: 10px; 
+    width: 300px;      
+    box-sizing: border-box;
+}
+.LoginButton{
+    background-color: rgb(41, 41, 41);
+    color: white;
+    font-size: 1.2rem; 
+    margin-top: 10px;
+    height: 50px;
+}
+.LoginButton:hover{
+    background-color: rgb(66, 66, 66);;
+}
+.Ulogiranje{
+    font-size: 1.1rem;
+}
+a{
+    text-decoration: none;
+}
+.LoginGoogle{
+  display: flex;
+  align-items: center;   
+  justify-content: center; 
+  gap: 10px;              
+  margin-top: 5px;
+}
+.google-button{
+    display: flex;
+  align-items: center;  
+  justify-content: center;
+   border-radius: 20px;
+    border-color: gray;
+    border: none;
+   font-size: 0.9rem; 
+   background-color: rgb(129, 175, 222);
+   height: 45px;
+   font-weight: bold;
+}
+.google-button:hover{
+     background-color: rgb(187, 219, 250);
+}
+#googleImage{
+  width: 60px;
+  height: 60px;
+}
