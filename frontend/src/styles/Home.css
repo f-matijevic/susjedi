@@ -109,4 +109,58 @@ body {
     font-size: 0.95rem;
     color: #5f6c7b;
 }
+.meetings-section {
+    margin-top: 4rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.meetings-section h2 {
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+}
+
+.meeting-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    padding: 0;
+    list-style: none;
+}
+
+.meeting-item {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.meeting-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.meeting-item h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+    color: var(--primary-color);
+}
+
+.meeting-item p {
+    font-size: 0.95rem;
+    margin: 0.3rem 0;
+    color: #4a5568;
+}
+
+.meeting-item strong {
+    color: #2c3e50;
+}
+
 

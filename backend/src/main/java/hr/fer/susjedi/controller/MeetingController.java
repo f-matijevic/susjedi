@@ -1,5 +1,6 @@
 package hr.fer.susjedi.controller;
 
+import hr.fer.susjedi.model.entity.User;
 import hr.fer.susjedi.model.request.CreateMeetingRequest;
 import hr.fer.susjedi.model.response.MeetingDTO;
 import hr.fer.susjedi.service.MeetingService;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +27,14 @@ public class MeetingController {
     public ResponseEntity<List<MeetingDTO>> getAllMeetings() {
         log.info("GET /api/meetings - Fetching all meetings");
         List<MeetingDTO> meetings = meetingService.getAllMeetings();
+        return ResponseEntity.ok(meetings);
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<MeetingDTO>> getMyMeetings(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        log.info("GET /api/meetings/my - Fetching meetings for user {}", user.getEmail());
+        List<MeetingDTO> meetings = meetingService.getMeetingsByUser(user);
         return ResponseEntity.ok(meetings);
     }
 

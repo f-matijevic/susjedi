@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreateMeetingModal from './CreateMeetingModal.jsx';
 import '../styles/Home.css';
@@ -6,6 +6,7 @@ import '../styles/Home.css';
 function Home() {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [meetings, setMeetings] = useState([]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -19,6 +20,33 @@ function Home() {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
+
+    const fetchMeetings = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.warn("Nema tokena, korisnik nije prijavljen.");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8080/api/meetings/my', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setMeetings(data);
+            } else {
+                console.error("Greška pri dohvaćanju sastanaka:", response.status);
+            }
+        } catch (err) {
+            console.error("Greška:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchMeetings();
+    }, []);
 
     const handleMeetingCreated = async (meetingData) => {
         try {
@@ -52,10 +80,10 @@ function Home() {
                 throw new Error(`Server error: ${response.status} - ${responseText}`);
             }
 
-            const created = JSON.parse(responseText);
-            console.log('Meeting created:', created);
             alert('Sastanak uspješno kreiran!');
             setIsModalOpen(false);
+
+            await fetchMeetings();
 
         } catch (error) {
             console.error('Error creating meeting:', error);
@@ -87,6 +115,26 @@ function Home() {
                     </div>
 
                 </div>
+                <div className="meetings-section">
+                    <h2>Moji sastanci</h2>
+
+                    {meetings.length === 0 ? (
+                        <p>Nemaš još nijedan sastanak.</p>
+                    ) : (
+                        <ul className="meeting-list">
+                            {meetings.map(meeting => (
+                                <li key={meeting.id} className="meeting-item">
+                                    <h3>{meeting.title}</h3>
+                                    <p><strong>Lokacija:</strong> {meeting.location}</p>
+                                    <p><strong>Vrijeme:</strong> {new Date(meeting.meetingDatetime).toLocaleString()}
+                                    </p>
+                                    <p><strong>Status:</strong> {meeting.state}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+
             </main>
 
             {isModalOpen && (

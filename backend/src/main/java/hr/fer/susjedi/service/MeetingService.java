@@ -48,7 +48,28 @@ public class MeetingService {
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
+    private MeetingDTO mapToDTO(Meeting meeting) {
+        MeetingDTO dto = new MeetingDTO();
+        dto.setId(meeting.getId());
+        dto.setTitle(meeting.getTitle());
+        dto.setSummary(meeting.getSummary());
+        dto.setMeetingDatetime(meeting.getMeetingDatetime());
+        dto.setLocation(meeting.getLocation());
+        dto.setState(meeting.getState().name());
+        dto.setCreatedByEmail(meeting.getCreatedBy().getEmail());
+        dto.setCreatedAt(meeting.getCreatedAt());
+        dto.setAgendaItemsCount(
+                meeting.getAgendaItems() != null ? meeting.getAgendaItems().size() : 0
+        );
+        return dto;
+    }
 
+    public List<MeetingDTO> getMeetingsByUser(User user) {
+        List<Meeting> meetings = meetingRepository.findByCreatedBy(user);
+        return meetings.stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
     public MeetingDTO getMeetingById(Long id) {
         log.info("Fetching meeting by ID: {}", id);
         Meeting meeting = meetingRepository.findById(id)
