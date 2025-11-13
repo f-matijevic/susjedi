@@ -37,15 +37,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         try {
             String jwtToken = oAuth2Service.handleOAuth2Login(oauth2User, provider);
 
-            // Redirect frontend
-            String redirectUrl = frontendUrl + "/auth/callback?token=" + jwtToken;
+            String redirectUrl = frontendUrl + "/#/auth/callback?token=" + jwtToken;
             log.info("Redirecting to: {}", redirectUrl);
 
             getRedirectStrategy().sendRedirect(request, response, redirectUrl);
 
         } catch (Exception e) {
             log.error("Error during OAuth2 success handling", e);
-            response.sendRedirect(frontendUrl + "/login?error=oauth_failed");
+            response.sendRedirect(frontendUrl + "/#/?error=oauth_failed");
         }
     }
 
