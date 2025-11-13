@@ -1,14 +1,23 @@
-# Koristi Maven + Java 21
-FROM maven:3.9.9-eclipse-temurin-21
+FROM eclipse-temurin:25-jdk-alpine AS build
+WORKDIR /builder
 
+ARG JAR_FILE=target/*.jar
+COPY . ./
+
+RUN --mount=type=cache,target=/root/.m2 \
+    ./mvnw -f pom.xml clean package -DskipTests
+
+RUN cp $JAR_FILE app.jar && \
+    java -Djarmode=tools -jar app.jar extract \
+      --layers --launcher --destination extracted
+
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 
-# Kopiraj cijeli backend
-COPY backend ./
-
-# Buildaj aplikaciju
-RUN mvn clean package -DskipTests
-
 EXPOSE 8080
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
 
-CMD ["java", "-jar", "target/susjedi-0.0.1-SNAPSHOT.jar"]
+COPY --from=build /builder/extracted/dependencies/ ./
+COPY --from=build /builder/extracted/spring-boot-loader/ ./
+COPY --from=build /builder/extracted/snapshot-dependencies/ ./
+COPY --from=build /builder/extracted/application/ ./
