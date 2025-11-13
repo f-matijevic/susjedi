@@ -1,0 +1,10 @@
+name: Izgradi i objavi sliku frontend containera
+on:
+  workflow_dispatch:
+
+jobs:
+  build-push-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Otkrij workflow u drugoj grani
+        run: true
