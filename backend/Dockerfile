@@ -5,7 +5,8 @@ ARG JAR_FILE=target/*.jar
 COPY . ./
 
 RUN --mount=type=cache,target=/root/.m2 \
-    ./mvnw -f pom.xml clean package -DskipTests
+    ./mvnw -B --no-transfer-progress \
+      -f pom.xml clean package -DskipTests
 
 RUN cp $JAR_FILE app.jar && \
     java -Djarmode=tools -jar app.jar extract \
