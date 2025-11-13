@@ -1,0 +1,27 @@
+name: Izgradi i objavi sliku backend containera
+on:
+  workflow_dispatch:
+
+jobs:
+  build-push-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: actions/cache@v4
+        with:
+          path: cache
+          key: buildx-cache-mount-${{ hashFiles('backend/Dockerfile') }}
+      - uses: reproducible-containers/buildkit-cache-dance@v3
+        with:
+          cache-dir: cache
+          dockerfile: backend/Dockerfile
+          builder: ${{ steps.setup-buildx.outputs.name }}
+          skip-extraction: ${{ steps.cache.outputs.cache-hit }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: backend
+          file: backend/Dockerfile
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          push: false
