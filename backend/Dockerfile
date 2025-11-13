@@ -1,11 +1,11 @@
-FROM eclipse-temurin:25-jdk-alpine AS build
+FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /builder
 
 ARG JAR_FILE=target/*.jar
 COPY . ./
 
 RUN --mount=type=cache,target=/root/.m2 \
-    ./mvnw -B --no-transfer-progress \
+    ./mvnw --no-transfer-progress \
       -f pom.xml clean package -DskipTests
 
 RUN cp $JAR_FILE app.jar && \
