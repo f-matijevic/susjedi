@@ -1,0 +1,7 @@
+:{$PORT} {
+    tls off
+    log stdout
+
+    reverse_proxy /api/* {$API_HOST}
+    file_server
+}

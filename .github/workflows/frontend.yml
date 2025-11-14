@@ -1,9 +1,9 @@
-name: Izgradi i objavi sliku backend containera
+name: Izgradi i objavi sliku frontend containera
 on:
   workflow_dispatch:
 
 jobs:
-  build-push-backend:
+  build-push-frontend:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,28 +20,19 @@ jobs:
         id: buildx
       - uses: actions/cache@v4
         id: cache
-        with:
-          path: cache
-          key: buildx-cache-mount-${{ hashFiles('backend/Dockerfile') }}
-      - uses: reproducible-containers/buildkit-cache-dance@v3
-        with:
-          cache-dir: cache
-          dockerfile: backend/Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          skip-extraction: ${{ steps.cache.outputs.cache-hit }}
 
       - uses: docker/metadata-action@v5
         id: meta
         with:
           images: |
-            ghcr.io/${{ github.repository }}/backend
+            ghcr.io/${{ github.repository }}/frontend
       - uses: docker/build-push-action@v6
         env:
           DOCKER_BUILD_SUMMARY: false
         with:
           push: true
-          context: backend
-          file: backend/Dockerfile
+          context: frontend
+          file: frontend/Dockerfile
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: ${{ steps.meta.outputs.tags }}
