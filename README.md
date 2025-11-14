@@ -1,5 +1,7 @@
 # SUSJEDI
+
 susjedi.onrender.com
+
 Aplikacija podrške aktivnostima predstavnika stanara koja olakšava upravljanje zajedničkim prostorima.  
 
 # Opis projekta
