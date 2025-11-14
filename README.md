@@ -1,6 +1,6 @@
 # SUSJEDI
 
-susjedi.onrender.com
+https://susjedi.onrender.com
 
 Aplikacija podrške aktivnostima predstavnika stanara koja olakšava upravljanje zajedničkim prostorima.  
 
