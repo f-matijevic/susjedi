@@ -1,8 +1,9 @@
 FROM node:25-alpine AS build
 WORKDIR /builder
 
+ARG NODE_ENV
 ARG VITE_BASE_URL
-ARG NODE_ENV=production
+ARG VITE_ENV=production
 
 COPY package*.json ./
 RUN npm ci
