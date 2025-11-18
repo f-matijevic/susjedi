@@ -1,7 +1,12 @@
-:{$PORT} {
-    tls off
-    log stdout
+{
+    log {
+        output stdout
+        format console
+        include http.log.access
+    }
+}
 
+:{$PORT} {
     reverse_proxy /api/* {$API_HOST}
     file_server
 }
