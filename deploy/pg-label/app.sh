@@ -11,12 +11,12 @@ events() {
         -f "type=container" \
         -f "label=pg-label.enable" \
         -f "event=create" -f "event=destroy" \
-        --format "{{.Status}},{{.Name}},{{.ID}}"
+        --format "{{.Action}},{{.Actor.ID}},{{json .Actor.Attributes}}"
 }
 
 labels() {
-    FMT='{{ range $k, $v := .Config.Labels -}}{{ $k }}={{ $v }}'$'\n''{{ end -}}'
-    docker inspect -f "$FMT" "$1"
+    FMT='to_entries[] | "\(.key)=\(.value)"'
+    jq -r "$FMT" <<< "$1"
 }
 
 sql_do() {
@@ -78,20 +78,20 @@ main() {
     echo "CREATE EXTENSION IF NOT EXISTS dblink;"
     log "pg-label: spreman"
 
-    while IFS=',' read -r EVENT NAME ID; do
-        local PG_NAME="" PG_USER="" PG_PASS="" PERSIST=true
+    while IFS=',' read -r EVENT ID ATTR; do
+        local NAME PG_NAME="" PG_USER="" PG_PASS="" PERSIST=true
 
-        NAME="${NAME#/}"
-        log "$EVENT: $NAME ($ID)"
-
-        labels "$ID" | while IFS='=' read -r KEY VAL; do
+        labels "$ATTR" | while IFS='=' read -r KEY VAL; do
             case "$KEY" in
+                name) NAME="$VAL";;
                 pg-label.database) PG_NAME="$VAL";;
                 pg-label.username) PG_USER="$VAL";;
                 pg-label.password) PG_PASS="$VAL";;
                 pg-label.ephemeral) PERSIST="";;
             esac
         done
+
+        log "$EVENT: $NAME ($ID)"
 
         if [ -z "$PG_NAME$PG_USER" ]; then
             if [ -n "$PERSIST" ]; then
