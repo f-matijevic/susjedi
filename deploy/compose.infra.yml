@@ -1,0 +1,61 @@
+services:
+  proxy:
+    image: traefik:v3.6
+    ports:
+      - "443:443"
+    command:
+      - --certificatesResolvers.lencr.acme.email="${INFRA_ACME_EMAIL}"
+      - --providers.docker.defaultRule="Host(`{{ normalize .Name }}.${INFRA_BASE_DOMAIN}`)"
+    volumes:
+      - certs:/certs:rw
+      - ./traefik:/etc/traefik:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      ingress:
+    restart: unless-stopped
+
+  db:
+    image: postgres:18-alpine
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: ${INFRA_POSTGRES_PASS}
+    volumes:
+      - db:/var/lib/postgresql:rw
+    networks:
+      internal:
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "postgres"]
+      interval: 1m
+      start_period: 30s
+      start_interval: 5s
+    restart: unless-stopped
+
+  pg-label:
+    image: infra/pg-label
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    environment:
+      PGUSER: postgres
+      PGHOST: db.internal
+      PGPASSWORD: ${INFRA_POSTGRES_PASS}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      internal:
+    restart: unless-stopped
+
+volumes:
+  db:
+  certs:
+
+networks:
+  ingress:
+    name: ingress
+    internal: true
+    driver: ipvlan
+  internal:
+    name: internal
+    internal: true
+    driver: ipvlan

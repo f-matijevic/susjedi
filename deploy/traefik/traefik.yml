@@ -1,0 +1,35 @@
+providers:
+  docker:
+    exposedByDefault: false
+  file:
+    watch: false
+    directory: /etc/traefik/dynamic
+
+entryPoints:
+  web:
+    address: ":443"
+    http:
+      tls:
+        certResolver: lencr
+        options:
+          default:
+            minVersion: VersionTLS13
+            disableSessiontTickets: true
+      sanitizePath: true
+    observability:
+      accessLogs: false
+      metrics: false
+      tracing: false
+
+certificatesResolvers:
+  lencr:
+    acme:
+      storage: /certs/acme.json
+      keyType: EC256
+      tlsChallenge: {}
+
+log:
+  level: INFO
+  noColor: true
+
+ping: {}
