@@ -26,25 +26,25 @@ sql_do() {
 on_create() {
     sql_do <<EOF
 DECLARE
-  _pg_name TEXT := '${PG_NAME:-$PG_USER}';
-  _pg_user TEXT := '${PG_USER:-$PG_NAME}';
-  _pg_pass TEXT := '${PG_PASS:-$PG_USER}';
-  _persist BOOLEAN := '${PERSIST:-false}';
+  _pg_name TEXT := quote_ident('$PG_NAME');
+  _pg_user TEXT := quote_ident('$PG_USER');
+  _pg_pass TEXT := quote_literal('$PG_PASS');
+  _persist BOOLEAN := '$PERSIST';
 BEGIN
   RAISE NOTICE '$NAME: Stvaram bazu % za korisnika % (trajno: %)',
-    quote_ident(_pg_name), quote_ident(_pg_user), _persist;
+    _pg_name, _pg_user, _persist;
   BEGIN
-    PERFORM dblink_exec('', 'CREATE DATABASE ' || quote_ident(_pg_name)) || ';';
+    PERFORM dblink_exec('', 'CREATE DATABASE ' || _pg_name) || ';';
     EXCEPTION WHEN duplicate_database THEN
       IF _persist THEN
-        RAISE NOTICE 'Trajna baza vec postoji';
+        RAISE NOTICE 'Zadana baza vec postoji';
       ELSE
         RAISE EXCEPTION 'Postojeca baza ne smije biti privremena';
       END IF;
   END;
   BEGIN
-    CREATE USER _pg_user PASSWORD _pg_pass;
-    GRANT ALL PRIVILEGES ON DATABASE _pg_name TO _pg_user;
+    EXECUTE 'CREATE USER ' || _pg_user || ' WITH PASSWORD ' || _pg_pass || ';';
+    EXECUTE 'GRANT ALL PRIVILEGES ON DATABASE ' || _pg_name || ' TO ' || _pg_user || ';';
     EXCEPTION WHEN duplicate_object THEN
       IF _persist THEN
         RAISE NOTICE 'Trajni korisnik vec postoji';
@@ -59,22 +59,21 @@ EOF
 on_destroy() {
     sql_do <<EOF
 DECLARE
-  _pg_name TEXT := '${PG_NAME:-$PG_USER}';
-  _pg_user TEXT := '${PG_USER:-$PG_NAME}';
-  _persist BOOLEAN := '${PERSIST:-false}';
+  _pg_name TEXT := quote_ident('$PG_NAME');
+  _pg_user TEXT := quote_ident('$PG_USER');
+  _persist BOOLEAN := '$PERSIST';
 BEGIN
   IF NOT _persist THEN
     RAISE NOTICE '$NAME: Odbacujem privremenu bazu % i korisnika %',
-      quote_ident(_pg_name), quote_ident(_pg_user);
-    PERFORM dblink_exec('', 'DROP DATABASE IF EXISTS ' || quote_ident(_pg_name)) || ';';
-    DROP USER IF EXISTS _pg_user;
+      _pg_name, _pg_user;
+    PERFORM dblink_exec('', 'DROP DATABASE IF EXISTS ' || _pg_name) || ';';
+    EXECUTE 'DROP USER IF EXISTS ' || _pg_user || ';';
   END IF;
 END;
 EOF
 }
 
 main() {
-    sleep 1
     echo "CREATE EXTENSION IF NOT EXISTS dblink;"
     log "pg-label: spreman"
 
@@ -87,7 +86,7 @@ main() {
                 pg-label.database) PG_NAME="$VAL";;
                 pg-label.username) PG_USER="$VAL";;
                 pg-label.password) PG_PASS="$VAL";;
-                pg-label.ephemeral) PERSIST="";;
+                pg-label.ephemeral) PERSIST=false;;
             esac
         done
 
@@ -100,6 +99,10 @@ main() {
             fi
             PG_USER="$ID"
         fi
+
+        PG_NAME="${PG_NAME:-$PG_USER}"
+        PG_USER="${PG_USER:-$PG_NAME}"
+        PG_PASS="${PG_PASS:-$PG_USER}"
 
         case "$EVENT" in
             create) on_create;;
