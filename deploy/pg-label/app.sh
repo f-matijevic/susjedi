@@ -47,7 +47,7 @@ BEGIN
     EXECUTE 'GRANT ALL PRIVILEGES ON DATABASE ' || _pg_name || ' TO ' || _pg_user || ';';
     EXCEPTION WHEN duplicate_object THEN
       IF _persist THEN
-        RAISE NOTICE 'Trajni korisnik vec postoji';
+        RAISE NOTICE 'Zadani korisnik vec postoji';
       ELSE
         RAISE EXCEPTION 'Postojeci korisnik ne smije biti privremen';
       END IF;
@@ -93,7 +93,7 @@ main() {
         log "$EVENT: $NAME ($ID)"
 
         if [ -z "$PG_NAME$PG_USER" ]; then
-            if [ -n "$PERSIST" ]; then
+            if [ "$PERSIST" == "true" ]; then
                 log "greska: $NAME: Za trajnu bazu nije zadano barem ime ili korisnicko ime"
                 continue
             fi
