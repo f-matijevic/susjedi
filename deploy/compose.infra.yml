@@ -1,16 +1,28 @@
 services:
+  setup-proxy:
+    image: nixery.dev/dash/gettext
+    working_dir: /work
+    command:
+      dash -c "envsubst < traefik.yml.tpl > traefik.yml"
+    environment:
+      - INFRA_ACME_EMAIL
+      - INFRA_BASE_DOMAIN
+    volumes:
+      - ./traefik:/work:rw
+
   proxy:
     image: traefik:v3.6
+    depends_on:
+      setup-proxy:
+        condition: service_completed_successfully
     ports:
-      - "443:443"
-    command:
-      - --certificatesResolvers.lencr.acme.email="${INFRA_ACME_EMAIL}"
-      - --providers.docker.defaultRule="Host(`{{ normalize .Name }}.${INFRA_BASE_DOMAIN}`)"
+      - "0.0.0.0:443:443"
     volumes:
       - certs:/certs:rw
       - ./traefik:/etc/traefik:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
+      default:
       ingress:
     restart: unless-stopped
 
@@ -31,7 +43,7 @@ services:
     restart: unless-stopped
 
   pg-label:
-    image: infra/pg-label
+    image: localhost/pg-label
     depends_on:
       db:
         condition: service_healthy
@@ -54,7 +66,7 @@ networks:
   ingress:
     name: ingress
     internal: true
-    driver: ipvlan
+    #driver: ipvlan
   internal:
     name: internal
     internal: true

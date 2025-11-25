@@ -1,0 +1,6 @@
+tls:
+  options:
+    default:
+      sniStrict: false
+      minVersion: VersionTLS13
+      disableSessionTickets: true

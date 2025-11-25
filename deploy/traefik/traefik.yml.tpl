@@ -1,6 +1,12 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
 providers:
   docker:
+    network: ingress
     exposedByDefault: false
+    defaultRule: "Host(`{{ normalize .Name }}.${INFRA_BASE_DOMAIN}`)"
   file:
     watch: false
     directory: /etc/traefik/dynamic
@@ -11,10 +17,6 @@ entryPoints:
     http:
       tls:
         certResolver: lencr
-        options:
-          default:
-            minVersion: VersionTLS13
-            disableSessiontTickets: true
       sanitizePath: true
     observability:
       accessLogs: false
@@ -24,12 +26,12 @@ entryPoints:
 certificatesResolvers:
   lencr:
     acme:
+      email: "${INFRA_ACME_EMAIL}"
       storage: /certs/acme.json
-      keyType: EC256
       tlsChallenge: {}
+      keyType: EC256
 
 log:
   level: INFO
   noColor: true
-
-ping: {}
+  format: common
