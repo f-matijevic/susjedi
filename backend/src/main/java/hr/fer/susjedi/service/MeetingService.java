@@ -126,4 +126,29 @@ public class MeetingService {
         agendaItemRepository.save(item);
     }
 
+    @Transactional
+    public void publishMeeting(Long meetingId) {
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new RuntimeException("Sastanak nije pronađen"));
+
+        if (meeting.getState() != MeetingState.PLANIRAN) {
+            throw new RuntimeException("Samo planirani sastanci se mogu objaviti.");
+        }
+
+        if (meeting.getAgendaItems() == null || meeting.getAgendaItems().isEmpty()) {
+            throw new RuntimeException("Sastanak mora imati barem jednu točku dnevnog reda da bi bio objavljen.");
+        }
+
+        meeting.setState(MeetingState.OBJAVLJEN);
+        meetingRepository.save(meeting);
+        log.info("Sastanak ID {} je uspješno OBJAVLJEN", meetingId);
+    }
+
+    public List<MeetingDTO> getPublishedMeetings() {
+        log.info("Dohvaćanje svih objavljenih sastanaka");
+        return meetingRepository.findByState(MeetingState.OBJAVLJEN).stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
 }

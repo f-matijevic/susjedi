@@ -114,14 +114,21 @@ body {
 }
 
 .meetings-section {
-    margin-top: 4rem;
-    max-width: 900px;
+    margin-top: 3rem;
+    max-width: 1000px;
     width: 100%;
+}
+
+.meetings-section h2 {
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: var(--text-color);
 }
 
 .meeting-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
     padding: 0;
     list-style: none;
@@ -132,6 +139,16 @@ body {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eee;
+}
+
+.meeting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
 }
 
 .modal-overlay {
@@ -146,6 +163,18 @@ body {
     align-items: center;
     z-index: 2000;
 }
+
+.status-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: 1px solid currentColor;
+}
+
+.status-badge.planiran { color: #f6ad55; }
+.status-badge.objavljen { color: #28a745; }
 
 .modal-content {
     background: var(--card-bg);
@@ -210,8 +239,9 @@ body {
 }
 .agenda-section {
     margin-top: 10px;
-    border-top: 1px solid #ccc;
-    padding-top: 5px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    flex-grow: 1;
 }
 
 .agenda-list {

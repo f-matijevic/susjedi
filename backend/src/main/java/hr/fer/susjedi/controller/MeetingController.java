@@ -64,4 +64,19 @@ public class MeetingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    @PutMapping("/{id}/publish")
+    @PreAuthorize("hasRole('PREDSTAVNIK')")
+    public ResponseEntity<?> publishMeeting(@PathVariable Long id) {
+        log.info("PUT /api/meetings/{}/publish - Publishing meeting", id);
+        meetingService.publishMeeting(id);
+        return ResponseEntity.ok("Sastanak je uspješno objavljen.");
+    }
+
+    @GetMapping("/published")
+    public ResponseEntity<List<MeetingDTO>> getPublishedMeetings() {
+        log.info("GET /api/meetings/published");
+        List<MeetingDTO> meetings = meetingService.getPublishedMeetings();
+        return ResponseEntity.ok(meetings);
+    }
+
 }
