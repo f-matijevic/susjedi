@@ -1,4 +1,3 @@
-
 :root {
     --primary-color: #3a7bd5;
     --primary-gradient: linear-gradient(135deg, #3a7bd5, #00d2ff);
@@ -14,6 +13,7 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
+    margin: 0;
 }
 
 .home-header {
@@ -37,8 +37,12 @@ body {
     letter-spacing: 1px;
 }
 
-.btn-logout {
-    background: rgba(255, 255, 255, 0.15);
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-logout, .btn-change-pass, .btn-admin {
     color: white;
     border: none;
     padding: 0.6rem 1.2rem;
@@ -46,16 +50,26 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
+    background: rgba(255, 255, 255, 0.15);
 }
 
-.btn-logout:hover {
+.btn-change-pass {
+    background-color: #e53e3e;
+}
+
+.btn-admin {
+    background-color: #667eea;
+}
+
+.btn-logout:hover, .btn-change-pass:hover, .btn-admin:hover {
+    filter: brightness(1.1);
     background: rgba(255, 255, 255, 0.3);
 }
 
 .home-main {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
     padding: 3rem 1rem;
     min-height: calc(100vh - 80px);
 }
@@ -82,7 +96,6 @@ body {
     text-align: center;
     cursor: pointer;
     transition: var(--transition);
-    transform: translateY(0);
 }
 
 .action-card:hover {
@@ -100,27 +113,10 @@ body {
     color: #3a7bd5;
 }
 
-.action-card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.4rem;
-}
-
-.action-card p {
-    font-size: 0.95rem;
-    color: #5f6c7b;
-}
 .meetings-section {
     margin-top: 4rem;
     max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.meetings-section h2 {
-    font-size: 1.6rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: var(--text-color);
+    width: 100%;
 }
 
 .meeting-list {
@@ -136,31 +132,79 @@ body {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     padding: 1.5rem;
-    transition: var(--transition);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--radius);
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    text-align: left;
 }
 
-.meeting-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+.form-group input {
+    padding: 0.7rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
 
-.meeting-item h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.6rem;
-    color: var(--primary-color);
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
 }
 
-.meeting-item p {
-    font-size: 0.95rem;
-    margin: 0.3rem 0;
-    color: #4a5568;
+.btn-submit {
+    flex: 2;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-.meeting-item strong {
-    color: #2c3e50;
+.btn-cancel {
+    flex: 1;
+    background: #eee;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
-
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}

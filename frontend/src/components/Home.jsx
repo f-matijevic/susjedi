@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreateMeetingModal from './CreateMeetingModal.jsx';
+import ChangePasswordModal from './ChangePasswordModal.jsx';
 import '../styles/Home.css';
 
 function Home() {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPassModalOpen, setIsPassModalOpen] = useState(false);
     const [meetings, setMeetings] = useState([]);
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -48,6 +50,33 @@ function Home() {
     useEffect(() => {
         fetchMeetings();
     }, []);
+
+    const handleChangePassword = async (passData) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_URL}/api/users/change-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    oldPassword: passData.oldPassword,
+                    newPassword: passData.newPassword
+                })
+            });
+
+            if (response.ok) {
+                alert("Lozinka uspješno promijenjena!");
+                setIsPassModalOpen(false);
+            } else {
+                const errorText = await response.text();
+                alert("Greška: " + errorText);
+            }
+        } catch (error) {
+            alert("Problem s povezivanjem na server.");
+        }
+    };
 
     const handleMeetingCreated = async (meetingData) => {
         try {
@@ -100,7 +129,13 @@ function Home() {
                     <h1 className="logo">StanPlan</h1>
                     <div className="header-buttons">
                         <button
-                            className="btn-logout btn-admin"
+                            className="btn-change-pass"
+                            onClick={() => setIsPassModalOpen(true)}
+                        >
+                            Promijeni zaporku
+                        </button>
+                        <button
+                            className="btn-admin"
                             onClick={() => navigate('/SignUp')}
                         >
                             Registriraj (Admin)
@@ -117,7 +152,7 @@ function Home() {
 
                     <div className="action-cards">
                         <div className="action-card primary" onClick={handleCreateMeeting}>
-                            <div className="card-icon">➕</div>
+                        <div className="card-icon">➕</div>
                             <h3>Kreiraj Sastanak</h3>
                             <p>Organiziraj novi sastanak stanara</p>
                         </div>
@@ -145,6 +180,12 @@ function Home() {
                 </div>
 
             </main>
+            {isPassModalOpen && (
+                <ChangePasswordModal
+                    onClose={() => setIsPassModalOpen(false)}
+                    onSubmit={handleChangePassword}
+                />
+            )}
 
             {isModalOpen && (
                 <CreateMeetingModal
