@@ -28,11 +28,12 @@ export default function Login(){
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
+
             const data = await response.json();
-            console.log(data.message);
 
             if (data.token) {
                 localStorage.setItem("token", data.token);
+                localStorage.setItem("username", data.username);
                 navigate("/home");
             } else {
                 alert(data.message);
@@ -40,6 +41,7 @@ export default function Login(){
 
         } catch (error) {
             console.error("Greška:", error);
+            alert("Problem s povezivanjem na server.");
         }
     };
 
@@ -52,9 +54,9 @@ export default function Login(){
                     <label htmlFor="email">Email</label>
                     <input type="email"
                            placeholder="ime.prezime@gmail.com"
-                            id="email"
-                            required
-                            onChange={handleChange}
+                           id="email"
+                           required
+                           onChange={handleChange}
                     ></input>
                     <label htmlFor="lozinka">Lozinka:</label>
                     <input
@@ -67,11 +69,7 @@ export default function Login(){
                     <button type="submit" className="LoginButton">
                         Prijavi se
                     </button>
-                </form> 
-                <p className="Ulogiranje">
-                    Nemate račun? 
-                    <Link to="/SignUp"> Registrirajte se.</Link>
-                </p>
+                </form>
                 <div className="LoginGoogle">
                     <img id="googleImage" src={googleIcon} alt="Google"/>
                     <button
@@ -83,6 +81,12 @@ export default function Login(){
                         Prijavite se pomoću Google računa
                     </button>
                 </div>
+                <button
+                    onClick={() => navigate("/home")}
+                    className="HomeButton"
+                >
+                    Početna stranica
+                </button>
             </div>
         </div>
 

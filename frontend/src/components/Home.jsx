@@ -98,9 +98,17 @@ function Home() {
             <header className="home-header">
                 <div className="header-content">
                     <h1 className="logo">StanPlan</h1>
-                    <button className="btn-logout" onClick={handleLogout}>
-                        Odjavi se
-                    </button>
+                    <div className="header-buttons">
+                        <button
+                            className="btn-logout btn-admin"
+                            onClick={() => navigate('/SignUp')}
+                        >
+                            Registriraj (Admin)
+                        </button>
+                        <button className="btn-logout" onClick={handleLogout}>
+                            Odjavi se
+                        </button>
+                    </div>
                 </div>
             </header>
 

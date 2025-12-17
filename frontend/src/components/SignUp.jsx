@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "../styles/SignUp.css";
-import googleIcon from "../assets/googleIcon.png";
 
 export default function SignUp(){
     const API_URL = import.meta.env.VITE_API_URL;
@@ -21,18 +20,30 @@ export default function SignUp(){
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const token = localStorage.getItem("token");
+
         try {
             const response = await fetch(`${API_URL}/api/register`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify(formData),
             });
 
             const data = await response.json();
-            console.log(data);
+
+            if (response.ok) {
+                alert("Uspjeh: " + (data.message || data.success));
+                setFormData({ Name: "", email: "", lozinka: "", role: "" });
+            } else {
+                alert("Greška: " + (data.message || data.error));
+            }
 
         } catch (error) {
             console.error("Greška:", error);
+            alert("Došlo je do greške pri komunikaciji sa serverom.");
         }
     };
 
@@ -73,25 +84,9 @@ export default function SignUp(){
                         onChange={handleChange}
                     />
                     <button type="submit" className="LoginButton">
-                        Registriraj se
+                        Registriraj račun
                     </button>
                 </form>
-
-                <div className="LoginGoogle">
-                    <img
-                        id="googleImage"
-                        src={googleIcon}
-                        alt="Google"
-                    />
-                    <button
-                        className="google-button"
-                        onClick={() => {
-                            window.location.href = `${API_URL}/oauth2/authorization/google`;
-                        }}
-                    >
-                        Registrirajte se pomoću Google računa
-                    </button>
-                </div>
             </div>
         </div>
 
