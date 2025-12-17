@@ -208,3 +208,46 @@ body {
     font-size: 1.5rem;
     cursor: pointer;
 }
+.agenda-section {
+    margin-top: 10px;
+    border-top: 1px solid #ccc;
+    padding-top: 5px;
+}
+
+.agenda-list {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.agenda-item {
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+.legal-badge {
+    color: red;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-left: 5px;
+    border: 1px solid red;
+    padding: 0 4px;
+}
+
+.agenda-desc {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 2px;
+}
+
+.btn-add-agenda {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-add-agenda:hover {
+    background: #0056b3;
+}

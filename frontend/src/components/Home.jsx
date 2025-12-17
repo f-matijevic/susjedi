@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreateMeetingModal from './CreateMeetingModal.jsx';
 import ChangePasswordModal from './ChangePasswordModal.jsx';
+import AddAgendaItemModal from './AddAgendaItemModal.jsx';
 import '../styles/Home.css';
 
 function Home() {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPassModalOpen, setIsPassModalOpen] = useState(false);
+    const [isAgendaModalOpen, setIsAgendaModalOpen] = useState(false);
+    const [selectedMeetingId, setSelectedMeetingId] = useState(null);
     const [meetings, setMeetings] = useState([]);
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -120,7 +123,29 @@ function Home() {
             alert('Greška: ' + error.message);
         }
     };
+    const handleAddAgendaItem = async (meetingId, agendaData) => {
+        try {
+            const response = await fetch(`${API_URL}/api/meetings/${meetingId}/agenda-items`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(agendaData)
+            });
 
+            if (response.ok) {
+                alert("Točka uspješno dodana!");
+                setIsAgendaModalOpen(false);
+                fetchMeetings();
+            } else {
+                const error = await response.text();
+                alert("Greška: " + error);
+            }
+        } catch (err) {
+            console.error("Greška pri dodavanju točke:", err);
+        }
+    };
 
     return (
         <div className="home-container">
@@ -149,36 +174,74 @@ function Home() {
 
             <main className="home-main">
                 <div className="content-wrapper">
-
                     <div className="action-cards">
                         <div className="action-card primary" onClick={handleCreateMeeting}>
-                        <div className="card-icon">➕</div>
+                            <div className="card-icon">➕</div>
                             <h3>Kreiraj Sastanak</h3>
                             <p>Organiziraj novi sastanak stanara</p>
                         </div>
                     </div>
-
                 </div>
+
                 <div className="meetings-section">
                     <h2>Moji sastanci</h2>
-
                     {meetings.length === 0 ? (
                         <p>Nemaš još nijedan sastanak.</p>
                     ) : (
                         <ul className="meeting-list">
                             {meetings.map(meeting => (
                                 <li key={meeting.id} className="meeting-item">
-                                    <h3>{meeting.title}</h3>
-                                    <p><strong>Lokacija:</strong> {meeting.location}</p>
-                                    <p><strong>Vrijeme:</strong> {new Date(meeting.meetingDatetime).toLocaleString()}
-                                    </p>
-                                    <p><strong>Status:</strong> {meeting.state}</p>
+                                    <div className="meeting-header">
+                                        <h3>{meeting.title}</h3>
+                                        <span
+                                            className={`status-badge ${meeting.state.toLowerCase()}`}>{meeting.state}</span>
+                                    </div>
+
+                                    <div className="meeting-details">
+                                        <p> {meeting.location}</p>
+                                        <p> {new Date(meeting.meetingDatetime).toLocaleString()}</p>
+                                    </div>
+
+                                    <div className="agenda-section">
+                                        <h4>Dnevni red:</h4>
+                                        {meeting.agendaItems && meeting.agendaItems.length > 0 ? (
+                                            <ul className="agenda-list">
+                                                {meeting.agendaItems
+                                                    .sort((a, b) => a.orderNumber - b.orderNumber)
+                                                    .map(item => (
+                                                        <li key={item.id} className="agenda-item">
+                                                            <span className="order-badge">{item.orderNumber}.</span>
+                                                            <div className="agenda-text">
+                                                                <strong>{item.title}</strong>
+                                                                {item.hasLegalEffect &&
+                                                                    <span className="legal-badge">Pravni učinak</span>}
+                                                                {item.description &&
+                                                                    <p className="agenda-desc">{item.description}</p>}
+                                                            </div>
+                                                        </li>
+                                                    ))}
+                                            </ul>
+                                        ) : (
+                                            <p className="no-agenda">Nema dodanih točaka.</p>
+                                        )}
+                                    </div>
+
+                                    {meeting.state === 'PLANIRAN' && (
+                                        <button
+                                            className="btn-add-agenda"
+                                            onClick={() => {
+                                                setSelectedMeetingId(meeting.id);
+                                                setIsAgendaModalOpen(true);
+                                            }}
+                                        >
+                                            + Dodaj točku
+                                        </button>
+                                    )}
                                 </li>
                             ))}
                         </ul>
                     )}
                 </div>
-
             </main>
             {isPassModalOpen && (
                 <ChangePasswordModal
@@ -191,6 +254,15 @@ function Home() {
                 <CreateMeetingModal
                     onClose={handleCloseModal}
                     onSubmit={handleMeetingCreated}
+                />
+            )}
+
+            {isAgendaModalOpen && (
+                <AddAgendaItemModal
+                    isOpen={isAgendaModalOpen}
+                    onClose={() => setIsAgendaModalOpen(false)}
+                    onSubmit={handleAddAgendaItem}
+                    meetingId={selectedMeetingId}
                 />
             )}
         </div>

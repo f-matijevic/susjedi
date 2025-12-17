@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Data
 public class MeetingDTO {
@@ -24,4 +25,5 @@ public class MeetingDTO {
     private OffsetDateTime createdAt;
 
     private Integer agendaItemsCount;
+    private List<AgendaItemDTO> agendaItems;
 }

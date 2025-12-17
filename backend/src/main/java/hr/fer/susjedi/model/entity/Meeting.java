@@ -1,6 +1,7 @@
 package hr.fer.susjedi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import hr.fer.susjedi.model.enums.MeetingState;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -62,12 +63,5 @@ public class Meeting {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = OffsetDateTime.now();
-    }
-
-    public enum MeetingState {
-        PLANIRAN,
-        OBJAVLJEN,
-        OBAVLJEN,
-        ARHIVIRAN
     }
 }

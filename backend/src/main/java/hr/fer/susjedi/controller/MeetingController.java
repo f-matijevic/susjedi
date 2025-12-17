@@ -1,6 +1,7 @@
 package hr.fer.susjedi.controller;
 
 import hr.fer.susjedi.model.entity.User;
+import hr.fer.susjedi.model.request.CreateAgendaItemRequest;
 import hr.fer.susjedi.model.request.CreateMeetingRequest;
 import hr.fer.susjedi.model.response.MeetingDTO;
 import hr.fer.susjedi.service.MeetingService;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,10 +46,22 @@ public class MeetingController {
         return ResponseEntity.ok(meeting);
     }
 
+    @PostMapping("/{id}/agenda-items")
+    @PreAuthorize("hasRole('PREDSTAVNIK')")
+    public ResponseEntity<?> addAgendaItem(
+            @PathVariable Long id,
+            @Valid @RequestBody CreateAgendaItemRequest request) {
+
+        log.info("POST /api/meetings/{}/agenda-items - Adding agenda item", id);
+        meetingService.addAgendaItem(id, request);
+        return ResponseEntity.ok("Točka dnevnog reda uspješno dodana.");
+    }
+
     @PostMapping
     public ResponseEntity<MeetingDTO> createMeeting(@Valid @RequestBody CreateMeetingRequest request) {
         log.info("POST /api/meetings - Creating new meeting: {}", request.getTitle());
         MeetingDTO created = meetingService.createMeeting(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
 }
