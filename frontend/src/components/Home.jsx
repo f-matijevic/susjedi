@@ -239,6 +239,39 @@ function Home() {
             console.error("Greška pri završavanju sastanka:", err);
         }
     };
+    const handleArchiveMeeting = async (meeting) => {
+        const unfinishedLegalItems = meeting.agendaItems.filter(
+            item => item.hasLegalEffect && !item.conclusion
+        );
+
+        if (unfinishedLegalItems.length > 0) {
+            const itemNumbers = unfinishedLegalItems.map(i => i.orderNumber).join(", ");
+            alert(`Sastanak se ne može arhivirati! Nedostaju zaključci za točke s pravnim učinkom: ${itemNumbers}`);
+            return;
+        }
+
+        if (!window.confirm("Želite li arhivirati sastanak? Nakon arhiviranja izmjene više nisu moguće.")) return;
+
+        try {
+            const response = await fetch(`${API_URL}/api/meetings/${meeting.id}/archive`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (response.ok) {
+                alert("Sastanak je uspješno arhiviran.");
+                await fetchMeetings(); // Osvježi listu
+            } else {
+                const errorText = await response.text();
+                alert("Greška: " + errorText);
+            }
+        } catch (error) {
+            console.error("Greška pri arhiviranju:", error);
+            alert("Problem s povezivanjem na server.");
+        }
+    };
     return (
         <div className="home-container">
             <header className="home-header">
@@ -265,64 +298,52 @@ function Home() {
 
                 <div className="meetings-section">
                     <h2>Objavljeni sastanci</h2>
-                    {publishedMeetings.length === 0 ? (
+                    {publishedMeetings.filter(m => m.state === 'OBJAVLJEN').length === 0 ? (
                         <p>Trenutno nema objavljenih sastanaka.</p>
                     ) : (
                         <ul className="meeting-list">
-                            {publishedMeetings.map(meeting => (
-                                <li key={meeting.id} className="meeting-item">
-                                    <div className="meeting-header">
-                                        <h3>{meeting.title}</h3>
-                                        <span className="status-badge objavljen">{meeting.state}</span>
-                                    </div>
-                                    <div className="meeting-details">
-                                        <p> {meeting.location}</p>
-                                        <p> {new Date(meeting.meetingDatetime).toLocaleString()}</p>
-                                        <p className="attendance-count">
-                                             Potvrđeno
-                                            dolazaka: <strong>{meeting.attendeeUsernames?.length || 0}</strong>
-                                        </p>
-                                    </div>
+                            {publishedMeetings
+                                .filter(m => m.state === 'OBJAVLJEN')
+                                .map(meeting => (
+                                    <li key={meeting.id} className="meeting-item">
+                                        <div className="meeting-header">
+                                            <h3>{meeting.title}</h3>
+                                            <span className="status-badge objavljen">{meeting.state}</span>
+                                        </div>
+                                        <div className="meeting-details">
+                                            <p> {meeting.location}</p>
+                                            <p> {new Date(meeting.meetingDatetime).toLocaleString()}</p>
+                                            <p className="attendance-count">
+                                                Potvrđeno dolazaka: <strong>{meeting.attendeeUsernames?.length || 0}</strong>
+                                            </p>
+                                        </div>
 
-                                    <div className="agenda-section">
-                                        <h4>Dnevni red:</h4>
-                                        <ul className="agenda-list">
-                                            {meeting.agendaItems?.sort((a, b) => a.orderNumber - b.orderNumber).map(item => (
-                                                <li key={item.id} className="agenda-item">
-                                                    <strong>{item.orderNumber}. {item.title}</strong>
-                                                    {item.hasLegalEffect &&
-                                                        <span className="legal-badge">Pravni učinak</span>}
-                                                    {item.description &&
-                                                        <p className="agenda-desc">{item.description}</p>}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
+                                        <div className="agenda-section">
+                                            <h4>Dnevni red:</h4>
+                                            <ul className="agenda-list">
+                                                {meeting.agendaItems?.sort((a, b) => a.orderNumber - b.orderNumber).map(item => (
+                                                    <li key={item.id} className="agenda-item">
+                                                        <strong>{item.orderNumber}. {item.title}</strong>
+                                                        {item.hasLegalEffect && <span className="legal-badge">Pravni učinak</span>}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
 
-                                    <div className="attendance-actions" style={{marginTop: '15px'}}>
-                                        {meeting.currentUserAttending ? (
-                                            <span className="status-confirmed">
-                                                 Potvrđen dolazak
-                                            </span>
-                                        ) : (
-                                            <button
-                                                className="btn-submit"
-                                                onClick={() => handleConfirmAttendance(meeting.id)}
-                                            >
-                                                Potvrdi dolazak
-                                            </button>
-                                        )}
-                                        {meeting.state === 'OBJAVLJEN' && (
-                                            <button
-                                                className="btn-submit"
-                                                onClick={() => handleCompleteMeeting(meeting.id)}
-                                            >
+                                        <div className="attendance-actions" style={{marginTop: '15px'}}>
+                                            {meeting.currentUserAttending ? (
+                                                <span className="status-confirmed">Potvrđen dolazak</span>
+                                            ) : (
+                                                <button className="btn-submit" onClick={() => handleConfirmAttendance(meeting.id)}>
+                                                    Potvrdi dolazak
+                                                </button>
+                                            )}
+                                            <button className="btn-submit" onClick={() => handleCompleteMeeting(meeting.id)}>
                                                 Završi sastanak
                                             </button>
-                                        )}
-                                    </div>
-                                </li>
-                            ))}
+                                        </div>
+                                    </li>
+                                ))}
                         </ul>
                     )}
 
@@ -380,43 +401,103 @@ function Home() {
                         <p>Nema sastanaka koji čekaju zaključke.</p>
                     ) : (
                         <ul className="meeting-list">
-                            {meetings.filter(m => m.state === 'OBAVLJEN').map(meeting => (
-                                <li key={meeting.id} className="meeting-item">
+                            {meetings.filter(m => m.state === 'OBAVLJEN').map(meeting => {
+                                const canArchive = meeting.agendaItems
+                                    ?.filter(item => item.hasLegalEffect)
+                                    .every(item => item.conclusion !== null);
+
+                                return (
+                                    <li key={meeting.id} className="meeting-item">
+                                        <div className="meeting-header">
+                                            <div>
+                                                <h3>{meeting.title}</h3>
+                                                <span className="status-badge obavljen">{meeting.state}</span>
+                                            </div>
+
+                                            <button
+                                                className="btn-submit"
+                                                onClick={() => handleArchiveMeeting(meeting)}
+                                                title={!canArchive ? "Morate unijeti zaključke za sve točke s pravnim učinkom" : "Arhiviraj sastanak"}
+                                            >
+                                                Arhiviraj sastanak
+                                            </button>
+                                        </div>
+
+                                        <div className="agenda-section">
+                                            <h4>Dnevni red i zaključci:</h4>
+                                            <ul className="agenda-list">
+                                                {meeting.agendaItems?.sort((a, b) => a.orderNumber - b.orderNumber).map(item => (
+                                                    <li key={item.id} className="agenda-item">
+                                                        <div>
+                                                            <strong>{item.orderNumber}. {item.title}</strong>
+                                                            {item.hasLegalEffect && (
+                                                                <span className="legal-badge">Pravni učinak</span>
+                                                            )}
+                                                        </div>
+
+                                                        {item.conclusion ? (
+                                                            <div className="conclusion-box">
+                                                                <p><strong>Zaključak:</strong> {item.conclusion.content}</p>
+                                                                {item.conclusion.votingResult && (
+                                                                    <span className={`status-badge ${item.conclusion.votingResult.toLowerCase()}`}>
+                                                    {item.conclusion.votingResult}
+                                                </span>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            <div style={{ marginTop: '10px' }}>
+                                                                <button
+                                                                    className="btn-add-agenda"
+                                                                    style={{ padding: '8px 15px', fontSize: '0.85em' }}
+                                                                    onClick={() => {
+                                                                        setSelectedAgendaItem(item);
+                                                                        setIsConclusionModalOpen(true);
+                                                                    }}
+                                                                >
+                                                                    Dodaj zaključak
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
+                    <div style={{margin: '40px 0'}}></div>
+                    <h2>Arhiva sastanaka</h2>
+                    {publishedMeetings.filter(m => m.state === 'ARHIVIRAN').length === 0 ? (
+                        <p>Nema arhiviranih sastanaka.</p>
+                    ) : (
+                        <ul className="meeting-list">
+                            {publishedMeetings.filter(m => m.state === 'ARHIVIRAN').map(meeting => (
+                                <li key={meeting.id} className="meeting-item archive-mode" style={{ opacity: 0.85 }}>
                                     <div className="meeting-header">
                                         <h3>{meeting.title}</h3>
-                                        <span className="status-badge obavljen">{meeting.state}</span>
+                                        <span className="status-badge arhiviran">{meeting.state}</span>
+                                    </div>
+                                    <div className="meeting-details">
+                                        <p>{meeting.location}</p>
+                                        <p>{new Date(meeting.meetingDatetime).toLocaleString()}</p>
                                     </div>
 
                                     <div className="agenda-section">
-                                        <h4>Dnevni red i zaključci:</h4>
+                                        <h4>Zapisnik i rezultati:</h4>
                                         <ul className="agenda-list">
                                             {meeting.agendaItems?.sort((a, b) => a.orderNumber - b.orderNumber).map(item => (
                                                 <li key={item.id} className="agenda-item">
                                                     <strong>{item.orderNumber}. {item.title}</strong>
-                                                    {item.hasLegalEffect && (
-                                                        <span className="legal-badge">Pravni učinak</span>
-                                                    )}
-                                                    {item.conclusion ? (
-                                                        <div className="conclusion-box">
-                                                            <p>✅ <strong>Zaključak:</strong> {item.conclusion.content}</p>
+                                                    {item.conclusion && (
+                                                        <div className="conclusion-box-static">
+                                                            <p style={{ margin: 0 }}>{item.conclusion.content}</p>
                                                             {item.conclusion.votingResult && (
-                                                                <span className={`status-badge ${item.conclusion.votingResult.toLowerCase()}`}>
-                                                                    {item.conclusion.votingResult}
-                                                                </span>
+                                                                <span className={`status-badge ${item.conclusion.votingResult.toLowerCase()}`} style={{ fontSize: '0.7em' }}>
+                                                {item.conclusion.votingResult}
+                                            </span>
                                                             )}
-                                                        </div>
-                                                    ) : (
-                                                        <div style={{ marginTop: '10px' }}>
-                                                            <button
-                                                                className="btn-add-agenda"
-                                                                style={{ padding: '8px 15px', fontSize: '0.85em' }}
-                                                                onClick={() => {
-                                                                    setSelectedAgendaItem(item);
-                                                                    setIsConclusionModalOpen(true);
-                                                                }}
-                                                            >
-                                                                ➕ Dodaj zaključak
-                                                            </button>
                                                         </div>
                                                     )}
                                                 </li>
@@ -431,10 +512,10 @@ function Home() {
             </main>
 
             {isPassModalOpen && (
-                <ChangePasswordModal onClose={() => setIsPassModalOpen(false)} onSubmit={handleChangePassword} />
+                <ChangePasswordModal onClose={() => setIsPassModalOpen(false)} onSubmit={handleChangePassword}/>
             )}
             {isModalOpen && (
-                <CreateMeetingModal onClose={handleCloseModal} onSubmit={handleMeetingCreated} />
+                <CreateMeetingModal onClose={handleCloseModal} onSubmit={handleMeetingCreated}/>
             )}
             {isAgendaModalOpen && (
                 <AddAgendaItemModal

@@ -51,8 +51,8 @@ function AddConclusionModal({ onClose, onSubmit, agendaItem }) {
                                 onChange={(e) => setVotingResult(e.target.value)}
                                 style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
                             >
-                                <option value="IZGLASAN">✅ IZGLASAN</option>
-                                <option value="ODBIJEN">❌ ODBIJEN</option>
+                                <option value="IZGLASAN"> IZGLASAN</option>
+                                <option value="ODBIJEN"> ODBIJEN</option>
                             </select>
                         </div>
                     )}

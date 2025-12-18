@@ -197,11 +197,12 @@ public class MeetingService {
     }
 
     public List<MeetingDTO> getPublishedMeetings() {
-        return meetingRepository.findByState(MeetingState.OBJAVLJEN).stream()
+        return meetingRepository.findByStateInOrderByMeetingDatetimeDesc(
+                        List.of(MeetingState.OBJAVLJEN, MeetingState.OBAVLJEN, MeetingState.ARHIVIRAN)
+                ).stream()
                 .map(this::toDTO)
                 .toList();
     }
-
     public void confirmAttendance(Long meetingId, User user) {
         User dbUser = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new RuntimeException("Korisnik nije pronađen."));
@@ -258,6 +259,29 @@ public class MeetingService {
         }
 
         meeting.setState(MeetingState.OBAVLJEN);
+        meetingRepository.save(meeting);
+    }
+
+    @Transactional
+    public void archiveMeeting(Long id) {
+        checkIsPredstavnik();
+
+        Meeting meeting = meetingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sastanak nije pronađen"));
+
+        if (meeting.getState() != MeetingState.OBAVLJEN) {
+            throw new IllegalStateException("Samo obavljeni sastanci se mogu arhivirati.");
+        }
+
+        boolean missingLegalConclusions = meeting.getAgendaItems().stream()
+                .filter(item -> Boolean.TRUE.equals(item.getHasLegalEffect()))
+                .anyMatch(item -> item.getConclusion() == null);
+
+        if (missingLegalConclusions) {
+            throw new IllegalStateException("Sastanak se ne može arhivirati jer točke s pravnim učinkom nemaju unesene zaključke.");
+        }
+
+        meeting.setState(MeetingState.ARHIVIRAN);
         meetingRepository.save(meeting);
     }
 }

@@ -74,45 +74,6 @@ body {
     min-height: calc(100vh - 80px);
 }
 
-.content-wrapper {
-    max-width: 900px;
-    width: 100%;
-}
-
-.action-cards {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-    margin-top: 2rem;
-}
-
-.action-card {
-    background: var(--card-bg);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 2rem 1.5rem;
-    width: 260px;
-    text-align: center;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.action-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-}
-
-.action-card.primary {
-    border-top: 6px solid #3a7bd5;
-}
-
-.card-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    color: #3a7bd5;
-}
-
 .meetings-section {
     margin-top: 3rem;
     max-width: 1000px;
@@ -128,7 +89,7 @@ body {
 
 .meeting-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 1.5rem;
     padding: 0;
     list-style: none;
@@ -142,6 +103,7 @@ body {
     display: flex;
     flex-direction: column;
     border: 1px solid #eee;
+    transition: var(--transition);
 }
 
 .meeting-header {
@@ -149,6 +111,166 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 1rem;
+}
+
+.meeting-details p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.status-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: 1px solid currentColor;
+}
+
+.status-badge.planiran { color: #f6ad55; }
+.status-badge.objavljen { color: #28a745; }
+.status-badge.obavljen { color: #3182ce; }
+.status-badge.arhiviran {
+    background-color: #e2e8f0;
+    color: #4a5568;
+    border-color: #718096;
+}
+
+.status-badge.izglasan {
+    background-color: #c6f6d5;
+    color: #22543d;
+    border-color: #2f855a;
+}
+
+.status-badge.odbijen {
+    background-color: #fed7d7;
+    color: #822727;
+    border-color: #c53030;
+}
+
+.legal-badge {
+    color: #e53e3e;
+    font-weight: 700;
+    font-size: 0.7rem;
+    margin-left: 8px;
+    border: 1px solid #e53e3e;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.agenda-section {
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.agenda-list {
+    padding-left: 0;
+    list-style: none;
+    margin: 10px 0;
+}
+
+.agenda-item {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.agenda-desc {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+.conclusion-box {
+    background: #f0fff4;
+    border-left: 4px solid #38a169;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.conclusion-box-static {
+    background: #f8f9fa;
+    border-left: 4px solid #718096;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #4a5568;
+}
+
+.btn-submit {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-submit:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btn-archive {
+    background: #2d3748;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-archive:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+}
+
+.btn-add-agenda {
+    background: white;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-add-agenda:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.meeting-item.archive-mode {
+    border-left: 6px solid #718096;
+    background-color: #fcfcfc;
+}
+
+.attendance-actions {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #eee;
+}
+
+.status-confirmed {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.attendance-count {
+    font-size: 0.85rem;
+    color: #777;
 }
 
 .modal-overlay {
@@ -164,202 +286,11 @@ body {
     z-index: 2000;
 }
 
-.status-badge {
-    font-size: 0.7rem;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-weight: bold;
-    text-transform: uppercase;
-    border: 1px solid currentColor;
-}
-
-.status-badge.planiran { color: #f6ad55; }
-.status-badge.objavljen { color: #28a745; }
-
 .modal-content {
     background: var(--card-bg);
     padding: 2rem;
     border-radius: var(--radius);
-    width: 400px;
+    width: 450px;
     max-width: 90%;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    text-align: left;
-}
-
-.form-group input {
-    padding: 0.7rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 1.5rem;
-}
-
-.btn-submit {
-    flex: 2;
-    background: var(--primary-gradient);
-    color: white;
-    border: none;
-    padding: 0.8rem;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.btn-cancel {
-    flex: 1;
-    background: #eee;
-    border: none;
-    padding: 0.8rem;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.close-button {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-.agenda-section {
-    margin-top: 10px;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-    flex-grow: 1;
-}
-
-.agenda-list {
-    padding-left: 20px;
-    margin: 10px 0;
-}
-
-.agenda-item {
-    margin-bottom: 10px;
-    line-height: 1.2;
-}
-
-.legal-badge {
-    color: red;
-    font-weight: bold;
-    font-size: 0.8rem;
-    margin-left: 5px;
-    border: 1px solid red;
-    padding: 0 4px;
-}
-
-.agenda-desc {
-    font-size: 0.85rem;
-    color: #555;
-    margin-top: 2px;
-}
-
-.btn-add-agenda {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.btn-add-agenda:hover {
-    background: #0056b3;
-}
-.btn-confirm {
-    background-color: #4c51bf;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-confirm:hover {
-    background-color: #434190;
-}
-.status-badge.obavljen {
-    color: #4a5568;
-    border-color: #4a5568;
-}
-
-.conclusion-box {
-    border-left: 4px solid #48bb78;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.conclusion-box p {
-    margin: 0 0 8px 0;
-    color: #22543d;
-}
-
-.status-badge.izglasan {
-    background-color: #c6f6d5;
-    color: #22543d;
-    border-color: #2f855a;
-}
-
-.status-badge.odbijen {
-    background-color: #fed7d7;
-    color: #822727;
-    border-color: #c53030;
-}
-
-.conclusion-form textarea {
-    font-family: inherit;
-    font-size: 0.9rem;
-    color: var(--text-color);
-    transition: var(--transition);
-    resize: vertical;
-    min-height: 80px;
-}
-
-.conclusion-form textarea:focus {
-    outline: none;
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.1);
-}
-
-.conclusion-form select {
-    background: white;
-    border: 1px solid #cbd5e0;
-    color: var(--text-color);
-    cursor: pointer;
-    font-size: 0.85rem;
-}
-
-.conclusion-form .btn-add-agenda {
-    background: var(--primary-gradient);
-    border: none;
-    border-radius: 4px;
-    font-weight: 600;
-    transition: var(--transition);
-}
-
-.conclusion-form .btn-add-agenda:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.agenda-item strong {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-color);
 }

@@ -16,4 +16,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     List<Meeting> findByState(MeetingState state);
 
     List<Meeting> findAllByOrderByMeetingDatetimeDesc();
+
+    List<Meeting> findByStateInOrderByMeetingDatetimeDesc(List<MeetingState> states);
 }

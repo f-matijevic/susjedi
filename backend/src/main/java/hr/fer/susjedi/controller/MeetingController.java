@@ -116,4 +116,16 @@ public class MeetingController {
         meetingService.completeMeeting(id);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/{id}/archive")
+    public ResponseEntity<?> archiveMeeting(@PathVariable Long id) {
+        try {
+            meetingService.archiveMeeting(id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
