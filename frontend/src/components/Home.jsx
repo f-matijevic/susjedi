@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import CreateMeetingModal from './CreateMeetingModal.jsx';
 import ChangePasswordModal from './ChangePasswordModal.jsx';
 import AddAgendaItemModal from './AddAgendaItemModal.jsx';
+import AddConclusionModal from './AddConclusionModal.jsx';
 import '../styles/Home.css';
 
 function Home() {
@@ -13,6 +14,8 @@ function Home() {
     const [selectedMeetingId, setSelectedMeetingId] = useState(null);
     const [meetings, setMeetings] = useState([]);
     const [publishedMeetings, setPublishedMeetings] = useState([]);
+    const [isConclusionModalOpen, setIsConclusionModalOpen] = useState(false);
+    const [selectedAgendaItem, setSelectedAgendaItem] = useState(null);
     const API_URL = import.meta.env.VITE_API_URL;
 
     const handleLogout = () => {
@@ -143,7 +146,7 @@ function Home() {
     };
 
     const handlePublishMeeting = async (meetingId) => {
-        if (!window.confirm("Jeste li sigurni da želite objaviti sastanak? Nakon objave više ne možete dodavati točke.")) return;
+        if (!window.confirm("Jeste li sigurni da želite objaviti sastanak?")) return;
 
         try {
             const response = await fetch(`${API_URL}/api/meetings/${meetingId}/publish`, {
@@ -186,7 +189,56 @@ function Home() {
             alert("Problem s povezivanjem na server.");
         }
     };
+    const handleAddConclusion = async (itemId, content, votingResult) => {
+        if (!content) return alert("Molimo unesite tekst zaključka.");
 
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/api/meetings/agenda-items/${itemId}/conclusion`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    content: content,
+                    votingResult: votingResult
+                })
+            });
+
+            if (response.ok) {
+                alert("Zaključak uspješno dodan!");
+                await fetchMeetings();
+            } else {
+                const errorMsg = await response.text();
+                alert("Greška: " + errorMsg);
+            }
+        } catch (error) {
+            console.error("Greška pri slanju zaključka:", error);
+        }
+    };
+    const handleCompleteMeeting = async (meetingId) => {
+        if (!window.confirm("Želite li završiti sastanak?")) return;
+
+        try {
+            const response = await fetch(`${API_URL}/api/meetings/${meetingId}/complete`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (response.ok) {
+                alert("Sastanak završen! Sada možete unijeti zaključke u sekciji niže.");
+                fetchMeetings();
+            } else {
+                const err = await response.text();
+                alert("Greška: " + err);
+            }
+        } catch (err) {
+            console.error("Greška pri završavanju sastanka:", err);
+        }
+    };
     return (
         <div className="home-container">
             <header className="home-header">
@@ -249,23 +301,23 @@ function Home() {
 
                                     <div className="attendance-actions" style={{marginTop: '15px'}}>
                                         {meeting.currentUserAttending ? (
-                                            <span className="status-confirmed" style={{color: '#2d3748', fontWeight: 'bold'}}>
+                                            <span className="status-confirmed">
                                                  Potvrđen dolazak
                                             </span>
                                         ) : (
                                             <button
-                                                className="btn-confirm"
+                                                className="btn-submit"
                                                 onClick={() => handleConfirmAttendance(meeting.id)}
-                                                style={{
-                                                    backgroundColor: '#4c51bf',
-                                                    color: 'white',
-                                                    padding: '8px 15px',
-                                                    borderRadius: '8px',
-                                                    cursor: 'pointer',
-                                                    border: 'none'
-                                                }}
                                             >
                                                 Potvrdi dolazak
+                                            </button>
+                                        )}
+                                        {meeting.state === 'OBJAVLJEN' && (
+                                            <button
+                                                className="btn-submit"
+                                                onClick={() => handleCompleteMeeting(meeting.id)}
+                                            >
+                                                Završi sastanak
                                             </button>
                                         )}
                                     </div>
@@ -323,6 +375,58 @@ function Home() {
                             ))}
                         </ul>
                     )}
+                    <h2>Sastanci za obradu (Obavljeni)</h2>
+                    {meetings.filter(m => m.state === 'OBAVLJEN').length === 0 ? (
+                        <p>Nema sastanaka koji čekaju zaključke.</p>
+                    ) : (
+                        <ul className="meeting-list">
+                            {meetings.filter(m => m.state === 'OBAVLJEN').map(meeting => (
+                                <li key={meeting.id} className="meeting-item">
+                                    <div className="meeting-header">
+                                        <h3>{meeting.title}</h3>
+                                        <span className="status-badge obavljen">{meeting.state}</span>
+                                    </div>
+
+                                    <div className="agenda-section">
+                                        <h4>Dnevni red i zaključci:</h4>
+                                        <ul className="agenda-list">
+                                            {meeting.agendaItems?.sort((a, b) => a.orderNumber - b.orderNumber).map(item => (
+                                                <li key={item.id} className="agenda-item">
+                                                    <strong>{item.orderNumber}. {item.title}</strong>
+                                                    {item.hasLegalEffect && (
+                                                        <span className="legal-badge">Pravni učinak</span>
+                                                    )}
+                                                    {item.conclusion ? (
+                                                        <div className="conclusion-box">
+                                                            <p>✅ <strong>Zaključak:</strong> {item.conclusion.content}</p>
+                                                            {item.conclusion.votingResult && (
+                                                                <span className={`status-badge ${item.conclusion.votingResult.toLowerCase()}`}>
+                                                                    {item.conclusion.votingResult}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <div style={{ marginTop: '10px' }}>
+                                                            <button
+                                                                className="btn-add-agenda"
+                                                                style={{ padding: '8px 15px', fontSize: '0.85em' }}
+                                                                onClick={() => {
+                                                                    setSelectedAgendaItem(item);
+                                                                    setIsConclusionModalOpen(true);
+                                                                }}
+                                                            >
+                                                                ➕ Dodaj zaključak
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </main>
 
@@ -338,6 +442,16 @@ function Home() {
                     onClose={() => setIsAgendaModalOpen(false)}
                     onSubmit={handleAddAgendaItem}
                     meetingId={selectedMeetingId}
+                />
+            )}
+            {isConclusionModalOpen && (
+                <AddConclusionModal
+                    agendaItem={selectedAgendaItem}
+                    onClose={() => setIsConclusionModalOpen(false)}
+                    onSubmit={async (itemId, content, result) => {
+                        await handleAddConclusion(itemId, content, result);
+                        setIsConclusionModalOpen(false);
+                    }}
                 />
             )}
         </div>
