@@ -17,6 +17,7 @@ function Home() {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
         navigate('/');
     };
 
@@ -33,20 +34,22 @@ function Home() {
         if (!token) return;
 
         try {
-            // 1. Dohvati moje sastanke (za predstavnika)
             const myRes = await fetch(`${API_URL}/api/meetings/my`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (myRes.ok) setMeetings(await myRes.json());
 
-            // 2. Dohvati sve objavljene sastanke (za sve)
             const pubRes = await fetch(`${API_URL}/api/meetings/published`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            if (pubRes.ok) setPublishedMeetings(await pubRes.json());
+            if (pubRes.ok) {
+                const data = await pubRes.json();
+                setPublishedMeetings(data);
+                console.log("Published meetings:", data); // Debug log
+            }
 
         } catch (err) {
-            console.error("Greška pri dohvaćanju:", err);
+            console.error("Greška pri dohvaćanju sastanaka:", err);
         }
     };
 
@@ -84,11 +87,6 @@ function Home() {
     const handleMeetingCreated = async (meetingData) => {
         try {
             const token = localStorage.getItem('token');
-            if (!token) {
-                alert("Niste prijavljeni ili je token istekao");
-                return;
-            }
-
             const payload = {
                 title: meetingData.title,
                 summary: meetingData.summary,
@@ -105,17 +103,13 @@ function Home() {
                 body: JSON.stringify(payload)
             });
 
-            console.log('Response status:', response.status);
-            const responseText = await response.text();
-            console.log('Response body:', responseText);
-
             if (!response.ok) {
+                const responseText = await response.text();
                 throw new Error(`Server error: ${response.status} - ${responseText}`);
             }
 
             alert('Sastanak uspješno kreiran!');
             setIsModalOpen(false);
-
             await fetchMeetings();
 
         } catch (error) {
@@ -123,6 +117,7 @@ function Home() {
             alert('Greška: ' + error.message);
         }
     };
+
     const handleAddAgendaItem = async (meetingId, agendaData) => {
         try {
             const response = await fetch(`${API_URL}/api/meetings/${meetingId}/agenda-items`, {
@@ -146,6 +141,7 @@ function Home() {
             console.error("Greška pri dodavanju točke:", err);
         }
     };
+
     const handlePublishMeeting = async (meetingId) => {
         if (!window.confirm("Jeste li sigurni da želite objaviti sastanak? Nakon objave više ne možete dodavati točke.")) return;
 
@@ -159,7 +155,7 @@ function Home() {
 
             if (response.ok) {
                 alert("Sastanak objavljen!");
-                fetchMeetings(); // Osvježi listu
+                fetchMeetings();
             } else {
                 const error = await response.text();
                 alert("Greška: " + error);
@@ -168,6 +164,29 @@ function Home() {
             console.error("Greška pri objavi:", err);
         }
     };
+
+    const handleConfirmAttendance = async (meetingId) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_URL}/api/meetings/${meetingId}/confirm`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                alert("Uspješno potvrđeno!");
+                await fetchMeetings();
+            } else {
+                const errorText = await response.text();
+                alert(errorText || "Greška pri potvrdi.");
+                await fetchMeetings();
+            }
+        } catch (error) {
+            console.error("Greška pri potvrdi dolaska:", error);
+            alert("Problem s povezivanjem na server.");
+        }
+    };
+
     return (
         <div className="home-container">
             <header className="home-header">
@@ -205,8 +224,12 @@ function Home() {
                                         <span className="status-badge objavljen">{meeting.state}</span>
                                     </div>
                                     <div className="meeting-details">
-                                        <p>{meeting.location}</p>
-                                        <p>{new Date(meeting.meetingDatetime).toLocaleString()}</p>
+                                        <p> {meeting.location}</p>
+                                        <p> {new Date(meeting.meetingDatetime).toLocaleString()}</p>
+                                        <p className="attendance-count">
+                                             Potvrđeno
+                                            dolazaka: <strong>{meeting.attendeeUsernames?.length || 0}</strong>
+                                        </p>
                                     </div>
 
                                     <div className="agenda-section">
@@ -215,11 +238,36 @@ function Home() {
                                             {meeting.agendaItems?.sort((a, b) => a.orderNumber - b.orderNumber).map(item => (
                                                 <li key={item.id} className="agenda-item">
                                                     <strong>{item.orderNumber}. {item.title}</strong>
-                                                    {item.hasLegalEffect && <span className="legal-badge">Pravni učinak</span>}
-                                                    {item.description && <p className="agenda-desc">{item.description}</p>}
+                                                    {item.hasLegalEffect &&
+                                                        <span className="legal-badge">Pravni učinak</span>}
+                                                    {item.description &&
+                                                        <p className="agenda-desc">{item.description}</p>}
                                                 </li>
                                             ))}
                                         </ul>
+                                    </div>
+
+                                    <div className="attendance-actions" style={{marginTop: '15px'}}>
+                                        {meeting.currentUserAttending ? (
+                                            <span className="status-confirmed" style={{color: '#2d3748', fontWeight: 'bold'}}>
+                                                 Potvrđen dolazak
+                                            </span>
+                                        ) : (
+                                            <button
+                                                className="btn-confirm"
+                                                onClick={() => handleConfirmAttendance(meeting.id)}
+                                                style={{
+                                                    backgroundColor: '#4c51bf',
+                                                    color: 'white',
+                                                    padding: '8px 15px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    border: 'none'
+                                                }}
+                                            >
+                                                Potvrdi dolazak
+                                            </button>
+                                        )}
                                     </div>
                                 </li>
                             ))}
@@ -228,7 +276,7 @@ function Home() {
 
                     <div style={{margin: '40px 0'}}></div>
 
-                    <h2>Moji sastanci</h2>
+                    <h2>Moji sastanci (Planirani)</h2>
                     {meetings.filter(m => m.state === 'PLANIRAN').length === 0 ? (
                         <p>Nemaš sastanaka u pripremi.</p>
                     ) : (
@@ -240,8 +288,8 @@ function Home() {
                                         <span className="status-badge planiran">{meeting.state}</span>
                                     </div>
                                     <div className="meeting-details">
-                                        <p>{meeting.location}</p>
-                                        <p>{new Date(meeting.meetingDatetime).toLocaleString()}</p>
+                                        <p> {meeting.location}</p>
+                                        <p> {new Date(meeting.meetingDatetime).toLocaleString()}</p>
                                     </div>
 
                                     <div className="agenda-section">

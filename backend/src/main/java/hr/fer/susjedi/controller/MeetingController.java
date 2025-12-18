@@ -5,6 +5,7 @@ import hr.fer.susjedi.model.request.CreateAgendaItemRequest;
 import hr.fer.susjedi.model.request.CreateMeetingRequest;
 import hr.fer.susjedi.model.response.MeetingDTO;
 import hr.fer.susjedi.service.MeetingService;
+import hr.fer.susjedi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -23,7 +25,7 @@ import java.util.List;
 public class MeetingController {
 
     private final MeetingService meetingService;
-
+    private final UserService userService;
     @GetMapping
     public ResponseEntity<List<MeetingDTO>> getAllMeetings() {
         log.info("GET /api/meetings - Fetching all meetings");
@@ -77,6 +79,18 @@ public class MeetingController {
         log.info("GET /api/meetings/published");
         List<MeetingDTO> meetings = meetingService.getPublishedMeetings();
         return ResponseEntity.ok(meetings);
+    }
+
+    @PostMapping("/{id}/confirm")
+    @PreAuthorize("hasRole('SUVLASNIK')")
+    public ResponseEntity<?> confirmAttendance(@PathVariable Long id, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+
+        log.info("Korisnik {} potvrđuje dolazak na sastanak {}", user.getUsername(), id);
+
+        meetingService.confirmAttendance(id, user);
+
+        return ResponseEntity.ok("Dolazak potvrđen.");
     }
 
 }

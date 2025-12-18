@@ -26,4 +26,6 @@ public class MeetingDTO {
 
     private Integer agendaItemsCount;
     private List<AgendaItemDTO> agendaItems;
+    private List<String> attendeeUsernames;
+    private boolean isCurrentUserAttending;
 }
