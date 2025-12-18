@@ -11,4 +11,5 @@ public class AgendaItemDTO {
     private Boolean hasLegalEffect;
     private Boolean requiresVoting;
     private String stanblogDiscussionUrl;
+    private ConclusionDTO conclusion;
 }

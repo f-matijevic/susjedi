@@ -43,6 +43,9 @@ public class AgendaItem {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @OneToOne(mappedBy = "agendaItem", cascade = CascadeType.ALL)
+    private Conclusion conclusion;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

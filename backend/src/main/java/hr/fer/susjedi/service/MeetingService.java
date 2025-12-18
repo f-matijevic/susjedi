@@ -1,18 +1,13 @@
 package hr.fer.susjedi.service;
 
-import hr.fer.susjedi.model.entity.AgendaItem;
-import hr.fer.susjedi.model.entity.MeetingAttendance;
+import hr.fer.susjedi.model.entity.*;
 import hr.fer.susjedi.model.enums.MeetingState;
 import hr.fer.susjedi.model.request.CreateAgendaItemRequest;
 import hr.fer.susjedi.model.request.CreateMeetingRequest;
+import hr.fer.susjedi.model.response.ConclusionDTO;
 import hr.fer.susjedi.model.response.MeetingDTO;
-import hr.fer.susjedi.model.entity.Meeting;
-import hr.fer.susjedi.model.entity.User;
 import hr.fer.susjedi.model.response.AgendaItemDTO;
-import hr.fer.susjedi.repository.AgendaItemRepository;
-import hr.fer.susjedi.repository.MeetingAttendanceRepository;
-import hr.fer.susjedi.repository.MeetingRepository;
-import hr.fer.susjedi.repository.UserRepository;
+import hr.fer.susjedi.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -20,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import hr.fer.susjedi.model.enums.VotingResult;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,7 +30,14 @@ public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final UserRepository userRepository;
     private final AgendaItemRepository agendaItemRepository;
+    private final ConclusionRepository conclusionRepository;
 
+    private void checkIsPredstavnik() {
+        User currentUser = getCurrentUser();
+        if (!"PREDSTAVNIK".equals(currentUser.getRole())) {
+            throw new RuntimeException("Samo predstavnik suvlasnika ima pravo na ovu akciju.");
+        }
+    }
     @Transactional
     public MeetingDTO createMeeting(CreateMeetingRequest request) {
         User currentUser = getCurrentUser();
@@ -141,20 +144,27 @@ public class MeetingService {
             dto.setCurrentUserAttending(false);
         }
 
-        dto.setAgendaItemsCount(meeting.getAgendaItems() != null ? meeting.getAgendaItems().size() : 0);
-        if (meeting.getAgendaItems() != null) {
-            dto.setAgendaItems(meeting.getAgendaItems().stream().map(item -> {
-                AgendaItemDTO itemDto = new AgendaItemDTO();
-                itemDto.setId(item.getId());
-                itemDto.setTitle(item.getTitle());
-                itemDto.setDescription(item.getDescription());
-                itemDto.setOrderNumber(item.getOrderNumber());
-                itemDto.setHasLegalEffect(item.getHasLegalEffect());
-                itemDto.setRequiresVoting(item.getRequiresVoting());
-                itemDto.setStanblogDiscussionUrl(item.getStanblogDiscussionUrl());
-                return itemDto;
-            }).collect(Collectors.toList()));
-        }
+        dto.setAgendaItems(meeting.getAgendaItems().stream().map(item -> {
+            AgendaItemDTO itemDto = new AgendaItemDTO();
+            itemDto.setId(item.getId());
+            itemDto.setTitle(item.getTitle());
+            itemDto.setDescription(item.getDescription());
+            itemDto.setOrderNumber(item.getOrderNumber());
+            itemDto.setHasLegalEffect(item.getHasLegalEffect());
+            itemDto.setRequiresVoting(item.getRequiresVoting());
+            itemDto.setStanblogDiscussionUrl(item.getStanblogDiscussionUrl());
+
+            conclusionRepository.findByAgendaItemId(item.getId()).ifPresent(conclusion -> {
+                ConclusionDTO cDto = new ConclusionDTO();
+                cDto.setContent(conclusion.getContent());
+                if (conclusion.getVotingResult() != null) {
+                    cDto.setVotingResult(conclusion.getVotingResult().name());
+                }
+                itemDto.setConclusion(cDto);
+            });
+
+            return itemDto;
+        }).collect(Collectors.toList()));
         return dto;
     }
 
@@ -213,5 +223,41 @@ public class MeetingService {
         attendance.setUser(dbUser);
         attendance.setConfirmedAt(LocalDateTime.now());
         attendanceRepository.save(attendance);
+    }
+    @Transactional
+    public void addConclusion(Long agendaItemId, String content, String result) {
+        AgendaItem item = agendaItemRepository.findById(agendaItemId)
+                .orElseThrow(() -> new RuntimeException("Točka dnevnog reda nije pronađena."));
+
+        if (item.getMeeting().getState() != MeetingState.OBAVLJEN) {
+            throw new RuntimeException("Zaključci se unose tek nakon što je sastanak 'OBAVLJEN'.");
+        }
+
+        Conclusion conclusion = new Conclusion();
+        conclusion.setAgendaItem(item);
+        conclusion.setContent(content);
+
+        if (result != null && !result.isEmpty()) {
+            try {
+                conclusion.setVotingResult(VotingResult.valueOf(result));
+            } catch (IllegalArgumentException e) {
+                log.error("Neispravan rezultat glasanja: {}", result);
+            }
+        }
+
+        conclusionRepository.save(conclusion);
+    }
+    @Transactional
+    public void completeMeeting(Long meetingId) {
+        User currentUser = getCurrentUser();
+        Meeting meeting = meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new RuntimeException("Sastanak nije pronađen"));
+
+        if (!meeting.getCreatedBy().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Nemate ovlasti za završavanje ovog sastanka.");
+        }
+
+        meeting.setState(MeetingState.OBAVLJEN);
+        meetingRepository.save(meeting);
     }
 }

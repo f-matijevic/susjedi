@@ -2,6 +2,7 @@ package hr.fer.susjedi.controller;
 
 import hr.fer.susjedi.model.entity.User;
 import hr.fer.susjedi.model.request.CreateAgendaItemRequest;
+import hr.fer.susjedi.model.request.CreateConclusionRequest;
 import hr.fer.susjedi.model.request.CreateMeetingRequest;
 import hr.fer.susjedi.model.response.MeetingDTO;
 import hr.fer.susjedi.service.MeetingService;
@@ -93,4 +94,26 @@ public class MeetingController {
         return ResponseEntity.ok("Dolazak potvrđen.");
     }
 
+    @PostMapping("/agenda-items/{itemId}/conclusion")
+    @PreAuthorize("hasRole('PREDSTAVNIK')")
+    public ResponseEntity<?> addConclusion(
+            @PathVariable Long itemId,
+            @RequestBody CreateConclusionRequest request) {
+
+        log.info("Dodavanje zaključka za točku ID: {}", itemId);
+
+        meetingService.addConclusion(
+                itemId,
+                request.getContent(),
+                request.getVotingResult()
+        );
+
+        return ResponseEntity.ok("Zaključak uspješno dodan.");
+    }
+    @PutMapping("/{id}/complete")
+    @PreAuthorize("hasRole('PREDSTAVNIK')")
+    public ResponseEntity<?> completeMeeting(@PathVariable Long id) {
+        meetingService.completeMeeting(id);
+        return ResponseEntity.ok().build();
+    }
 }
