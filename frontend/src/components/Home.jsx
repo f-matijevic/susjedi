@@ -313,6 +313,7 @@ function Home() {
                                         <div className="meeting-details">
                                             <p> {meeting.location}</p>
                                             <p> {new Date(meeting.meetingDatetime).toLocaleString()}</p>
+                                            {meeting.summary && <p className="meeting-summary">{meeting.summary}</p>}
                                             <p className="attendance-count">
                                                 Potvrđeno dolazaka: <strong>{meeting.attendeeUsernames?.length || 0}</strong>
                                             </p>
@@ -325,6 +326,11 @@ function Home() {
                                                     <li key={item.id} className="agenda-item">
                                                         <strong>{item.orderNumber}. {item.title}</strong>
                                                         {item.hasLegalEffect && <span className="legal-badge">Pravni učinak</span>}
+                                                        {item.description && (
+                                                            <p className="agenda-desc" style={{ marginTop: '5px', color: '#555', fontSize: '0.85rem' }}>
+                                                                {item.description}
+                                                            </p>
+                                                        )}
                                                     </li>
                                                 ))}
                                             </ul>
@@ -362,6 +368,7 @@ function Home() {
                                     </div>
                                     <div className="meeting-details">
                                         <p> {meeting.location}</p>
+                                        {meeting.summary && <p className="meeting-summary">{meeting.summary}</p>}
                                         <p> {new Date(meeting.meetingDatetime).toLocaleString()}</p>
                                     </div>
 
@@ -373,6 +380,11 @@ function Home() {
                                                     <li key={item.id} className="agenda-item">
                                                         <strong>{item.orderNumber}. {item.title}</strong>
                                                         {item.hasLegalEffect && <span className="legal-badge">Pravni učinak</span>}
+                                                        {item.description && (
+                                                            <p className="agenda-desc" style={{ marginTop: '5px', color: '#555', fontSize: '0.85rem' }}>
+                                                                {item.description}
+                                                            </p>
+                                                        )}
                                                     </li>
                                                 ))}
                                             </ul>
@@ -434,7 +446,11 @@ function Home() {
                                                                 <span className="legal-badge">Pravni učinak</span>
                                                             )}
                                                         </div>
-
+                                                        {item.description && (
+                                                            <p className="agenda-desc" style={{ marginTop: '5px', color: '#555', fontSize: '0.85rem' }}>
+                                                                {item.description}
+                                                            </p>
+                                                        )}
                                                         {item.conclusion ? (
                                                             <div className="conclusion-box">
                                                                 <p><strong>Zaključak:</strong> {item.conclusion.content}</p>
@@ -481,6 +497,7 @@ function Home() {
                                     </div>
                                     <div className="meeting-details">
                                         <p>{meeting.location}</p>
+                                        {meeting.summary && <p className="meeting-summary">{meeting.summary}</p>}
                                         <p>{new Date(meeting.meetingDatetime).toLocaleString()}</p>
                                     </div>
 
@@ -490,6 +507,11 @@ function Home() {
                                             {meeting.agendaItems?.sort((a, b) => a.orderNumber - b.orderNumber).map(item => (
                                                 <li key={item.id} className="agenda-item">
                                                     <strong>{item.orderNumber}. {item.title}</strong>
+                                                    {item.description && (
+                                                        <p className="agenda-desc" style={{ marginTop: '5px', color: '#555', fontSize: '0.85rem' }}>
+                                                            {item.description}
+                                                        </p>
+                                                    )}
                                                     {item.conclusion && (
                                                         <div className="conclusion-box-static">
                                                             <p style={{ margin: 0 }}>{item.conclusion.content}</p>
