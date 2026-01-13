@@ -31,6 +31,7 @@ public class MeetingService {
     private final UserRepository userRepository;
     private final AgendaItemRepository agendaItemRepository;
     private final ConclusionRepository conclusionRepository;
+    private final EmailService emailService;
 
     private void checkIsPredstavnik() {
         User currentUser = getCurrentUser();
@@ -194,6 +195,9 @@ public class MeetingService {
         }
         meeting.setState(MeetingState.OBJAVLJEN);
         meetingRepository.save(meeting);
+        List<User> coowners = userRepository.findByRole("SUVLASNIK");
+        emailService.sendMeetingPublishedNotification(meeting, coowners);
+        log.info("Sastanak ID={} objavljen i email obavijesti poslane", meetingId);
     }
 
     public List<MeetingDTO> getPublishedMeetings() {
@@ -283,5 +287,8 @@ public class MeetingService {
 
         meeting.setState(MeetingState.ARHIVIRAN);
         meetingRepository.save(meeting);
+        List<User> coowners = userRepository.findByRole("SUVLASNIK");
+        emailService.sendMeetingArchivedNotification(meeting, coowners);
+        log.info("Sastanak ID={} arhiviran i email obavijesti poslane", id);
     }
 }
