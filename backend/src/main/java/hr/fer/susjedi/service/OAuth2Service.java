@@ -38,7 +38,7 @@ public class OAuth2Service {
             user.setEmail(email);
             user.setOauthProvider(provider.toUpperCase());
             user.setOauthProviderId(providerId);
-            user.setUsername(null);
+            user.setUsername(email);
             user.setPassword(null);
 
 

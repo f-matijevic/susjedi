@@ -19,7 +19,7 @@ public class CreateMeetingRequest {
     private String summary;
 
     @NotNull(message = "Datum i vrijeme su obavezni")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")  // ✅ PROMIJENI OVO - XXX umjesto X!
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private OffsetDateTime meetingDatetime;
 
     @NotBlank(message = "Lokacija je obavezna")

@@ -84,9 +84,9 @@ CREATE INDEX idx_attendances_meeting ON meeting_attendances(meeting_id);
 CREATE INDEX idx_attendances_user ON meeting_attendances(user_id);
 
 -- inicijalni podaci (admin)
--- pass: admin123 (u produkciji će biti hashirana!)
+-- pass: Admin123! (u produkciji će biti hashirana!)
 INSERT INTO users (username, password, email, role) 
-VALUES ('admin', '$2a$10$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'admin@stanplan.com', 'ADMIN');
+VALUES ('admin', '$2a$10$ifWDofwQHdjHbdAIwaEbJuuqZ9JLl9OiMlwPwuLM9/m.riHjwkese', 'admin@stanplan.com', 'ADMIN');
 
 COMMENT ON TABLE users IS 'Korisnici sustava (admin, predstavnici, suvlasnici)';
 COMMENT ON TABLE meetings IS 'Sastanci stanara';
