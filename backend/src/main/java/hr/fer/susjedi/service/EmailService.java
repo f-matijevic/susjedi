@@ -5,19 +5,21 @@ import hr.fer.susjedi.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EmailService {
-    private final JavaMailSender mailSender;
 
     @Value("${app.email.from}")
     private String fromEmail;
@@ -25,8 +27,17 @@ public class EmailService {
     @Value("${app.email.enabled:true}")
     private boolean emailEnabled;
 
+    @Value("${brevo.api.key}")
+    private String brevoApiKey;
+
+    private final RestTemplate restTemplate;
+
     @Async
     public void sendMeetingPublishedNotification(Meeting meeting, List<User> coowners) {
+        if (!emailEnabled) {
+            log.info("Email slanje je onemogućeno");
+            return;
+        }
 
         log.info("Slanje obavijesti o objavi sastanka '{}' na {} adresa",
                 meeting.getTitle(), coowners.size());
@@ -52,16 +63,29 @@ public class EmailService {
                 meeting.getSummary()
         );
 
+        int successCount = 0;
+        int failCount = 0;
+
         for (User user : coowners) {
-            sendSimpleEmail(user.getEmail(), subject, body);
-            log.debug("Email poslan korisniku: {}", user.getEmail());
+            if (sendEmail(user.getEmail(), subject, body)) {
+                successCount++;
+                log.debug("Email poslan korisniku: {}", user.getEmail());
+            } else {
+                failCount++;
+            }
         }
 
-        log.info("Završeno slanje obavijesti o objavi sastanka");
+        log.info("Završeno slanje obavijesti: {} uspješno, {} neuspješno",
+                successCount, failCount);
     }
 
     @Async
     public void sendMeetingArchivedNotification(Meeting meeting, List<User> coowners) {
+        if (!emailEnabled) {
+            log.info("Email slanje je onemogućeno");
+            return;
+        }
+
         log.info("Slanje obavijesti o arhiviranju sastanka '{}' na {} adresa",
                 meeting.getTitle(), coowners.size());
 
@@ -76,20 +100,63 @@ public class EmailService {
                 meeting.getTitle()
         );
 
+        int successCount = 0;
+        int failCount = 0;
+
         for (User user : coowners) {
-            sendSimpleEmail(user.getEmail(), subject, body);
-            log.debug("Email poslan korisniku: {}", user.getEmail());
+            if (sendEmail(user.getEmail(), subject, body)) {
+                successCount++;
+                log.debug("Email poslan korisniku: {}", user.getEmail());
+            } else {
+                failCount++;
+            }
         }
-        log.info("Završeno slanje obavijesti o arhiviranju sastanka");
+
+        log.info("Završeno slanje obavijesti: {} uspješno, {} neuspješno",
+                successCount, failCount);
     }
 
-    private void sendSimpleEmail(String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromEmail);
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        mailSender.send(message);
-        log.debug("Email uspješno poslan na: {}", to);
+    private boolean sendEmail(String to, String subject, String body) {
+        try {
+            String url = "https://api.brevo.com/v3/smtp/email";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("api-key", brevoApiKey);
+
+            Map<String, Object> sender = new HashMap<>();
+            sender.put("email", fromEmail);
+            sender.put("name", "StanPlan");
+
+            Map<String, Object> recipient = new HashMap<>();
+            recipient.put("email", to);
+
+            Map<String, Object> emailData = new HashMap<>();
+            emailData.put("sender", sender);
+            emailData.put("to", List.of(recipient));
+            emailData.put("subject", subject);
+            emailData.put("textContent", body);
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(emailData, headers);
+
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.debug("Email uspješno poslan na: {}", to);
+                return true;
+            } else {
+                log.error("Brevo API vratio neočekivani status: {}", response.getStatusCode());
+                return false;
+            }
+
+        } catch (HttpClientErrorException e) {
+            log.error("HTTP Error {} pri slanju emaila na {}: {}",
+                    e.getStatusCode(), to, e.getResponseBodyAsString());
+            return false;
+
+        } catch (Exception e) {
+            log.error("Greška pri slanju emaila na {}: {}", to, e.getMessage());
+            return false;
+        }
     }
 }
