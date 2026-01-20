@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import hr.fer.susjedi.model.enums.VotingResult;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -153,7 +155,7 @@ public class MeetingService {
             itemDto.setOrderNumber(item.getOrderNumber());
             itemDto.setHasLegalEffect(item.getHasLegalEffect());
             itemDto.setRequiresVoting(item.getRequiresVoting());
-            itemDto.setStanblogDiscussionUrl(item.getStanblogDiscussionUrl());
+            itemDto.setStanblogDiscussionUrl(item.getStanBlogDiscussionUrl());
 
             conclusionRepository.findByAgendaItemId(item.getId()).ifPresent(conclusion -> {
                 ConclusionDTO cDto = new ConclusionDTO();
@@ -182,7 +184,7 @@ public class MeetingService {
         item.setOrderNumber(request.getOrderNumber());
         item.setHasLegalEffect(request.getHasLegalEffect());
         item.setRequiresVoting(request.getRequiresVoting());
-        item.setStanblogDiscussionUrl(request.getStanblogDiscussionUrl());
+        item.setStanBlogDiscussionUrl(request.getStanblogDiscussionUrl());
         agendaItemRepository.save(item);
     }
 
@@ -290,5 +292,55 @@ public class MeetingService {
         List<User> coowners = userRepository.findByRole("SUVLASNIK");
         emailService.sendMeetingArchivedNotification(meeting, coowners);
         log.info("Sastanak ID={} arhiviran i email obavijesti poslane", id);
+    }
+
+    @Transactional
+    public MeetingDTO createMeetingFromStanBlogDiscussion(
+            String naslov,
+            String termin,
+            String tockaDnevnogReda,
+            String ciljSastanka) {
+
+        log.info("Kreiranje sastanka iz StanBlog diskusije: {}", naslov);
+
+        OffsetDateTime meetingDateTime = OffsetDateTime.parse(termin);
+
+        User currentUser;
+        try {
+            currentUser = getCurrentUser();
+        } catch (Exception e) {
+            log.info("Sastanak kreira vanjski sustav (StanBlog), tražim zamjenskog predstavnika...");
+            currentUser = userRepository.findAll().stream()
+                    .filter(u -> u.getRole().toString().contains("PREDSTAVNIK"))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Sastanak se ne može kreirati jer nema predstavnika u bazi!"));
+        }
+
+        log.info("Korisnik dodijeljen: {} ({})", currentUser.getEmail(), currentUser.getRole());
+
+        Meeting meeting = new Meeting();
+        meeting.setTitle(naslov);
+        meeting.setSummary(ciljSastanka != null ? ciljSastanka : "Sastanak kreiran iz StanBlog diskusije");
+        meeting.setMeetingDatetime(meetingDateTime);
+        meeting.setLocation("Kreiran iz StanBlog diskusije");
+        meeting.setState(MeetingState.OBAVLJEN);
+        meeting.setCreatedBy(currentUser);
+        meeting.setCreatedFromStanBlog(true);
+
+        meeting = meetingRepository.save(meeting);
+
+        AgendaItem agendaItem = new AgendaItem();
+        agendaItem.setMeeting(meeting);
+        agendaItem.setTitle(tockaDnevnogReda);
+        agendaItem.setDescription(ciljSastanka);
+        agendaItem.setOrderNumber(1);
+        agendaItem.setHasLegalEffect(true);
+        agendaItem.setRequiresVoting(true);
+
+        agendaItemRepository.save(agendaItem);
+
+        log.info("Sastanak ID={} uspješno kreiran.", meeting.getId());
+
+        return toDTO(meeting);
     }
 }

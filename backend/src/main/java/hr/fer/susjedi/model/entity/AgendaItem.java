@@ -38,10 +38,13 @@ public class AgendaItem {
     private Boolean requiresVoting = false;
 
     @Column(name = "stanblog_discussion_url", length = 500)
-    private String stanblogDiscussionUrl;
+    private String stanBlogDiscussionUrl;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "voting_question", columnDefinition = "TEXT")
+    private String votingQuestion;
 
     @OneToOne(mappedBy = "agendaItem", cascade = CascadeType.ALL)
     private Conclusion conclusion;

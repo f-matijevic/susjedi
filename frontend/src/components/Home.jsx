@@ -16,6 +16,7 @@ function Home() {
     const [publishedMeetings, setPublishedMeetings] = useState([]);
     const [isConclusionModalOpen, setIsConclusionModalOpen] = useState(false);
     const [selectedAgendaItem, setSelectedAgendaItem] = useState(null);
+    const [stanBlogDiscussions, setStanBlogDiscussions] = useState([]);
     const API_URL = import.meta.env.VITE_API_URL;
 
     const handleLogout = () => {
@@ -31,6 +32,23 @@ function Home() {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
+
+
+    const fetchStanBlogDiscussions = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/stanblog/discussions`);
+            if (response.ok) {
+                setStanBlogDiscussions(await response.json());
+            }
+        } catch (err) {
+            console.error("Greška pri dohvaćanju StanBlog diskusija:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchMeetings();
+        fetchStanBlogDiscussions();
+    }, []);
 
     const fetchMeetings = async () => {
         const token = localStorage.getItem('token');
@@ -262,7 +280,7 @@ function Home() {
 
             if (response.ok) {
                 alert("Sastanak je uspješno arhiviran.");
-                await fetchMeetings(); // Osvježi listu
+                await fetchMeetings();
             } else {
                 const errorText = await response.text();
                 alert("Greška: " + errorText);
@@ -293,7 +311,7 @@ function Home() {
 
             <main className="home-main">
                 <button className="btn-submit" onClick={handleCreateMeeting} style={{maxWidth: '200px', marginBottom: '20px'}}>
-                    ➕ Kreiraj Sastanak
+                     Kreiraj Sastanak
                 </button>
 
                 <div className="meetings-section">
@@ -307,8 +325,17 @@ function Home() {
                                 .map(meeting => (
                                     <li key={meeting.id} className="meeting-item">
                                         <div className="meeting-header">
-                                            <h3>{meeting.title}</h3>
-                                            <span className="status-badge objavljen">{meeting.state}</span>
+                                            <div>
+                                                <h3>{meeting.title}</h3>
+                                                <div style={{display: 'flex', gap: '5px'}}>
+                                                    <span className="status-badge obavljen">{meeting.state}</span>
+                                                    {meeting.createdFromStanBlog && (
+                                                        <span className="status-badge" style={{backgroundColor: '#e67e22', color: 'white'}}>
+                                                            Iz StanBloga
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="meeting-details">
                                             <p> {meeting.location}</p>
@@ -545,6 +572,7 @@ function Home() {
                     onClose={() => setIsAgendaModalOpen(false)}
                     onSubmit={handleAddAgendaItem}
                     meetingId={selectedMeetingId}
+                    stanBlogDiscussions={stanBlogDiscussions}
                 />
             )}
             {isConclusionModalOpen && (

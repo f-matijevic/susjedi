@@ -49,6 +49,12 @@ public class Meeting {
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
+    @Column(name = "stanblog_discussion_url", length = 500)
+    private String stanBlogDiscussionUrl;
+
+    @Column(name = "created_from_stanblog")
+    private Boolean createdFromStanBlog = false;
+
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AgendaItem> agendaItems = new ArrayList<>();
 

@@ -36,6 +36,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/stanblog/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/sastanci-iz-diskusije/**").permitAll()
                         .requestMatchers("/", "/login/**", "/oauth2/**", "/api/auth/**", "/api/login", "/api/register").permitAll()
                         .anyRequest().authenticated()
                 )
