@@ -10,7 +10,7 @@ public class CreateMeetingFromDiscussionResponse {
     private String naslov;
 
     @JsonProperty("datum_vrijeme")
-    private String datumVrijeme;  // ISO 8601 format
+    private String datumVrijeme;
 
     @JsonProperty("status")
     private String status;

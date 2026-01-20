@@ -13,7 +13,7 @@ public class Conclusion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne // Prema tvojoj bazi (UNIQUE agenda_item_id)
+    @OneToOne
     @JoinColumn(name = "agenda_item_id", nullable = false)
     private AgendaItem agendaItem;
 

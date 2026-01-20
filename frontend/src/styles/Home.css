@@ -319,3 +319,48 @@ body {
     max-width: 90%;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .header-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .home-main {
+        padding: 1.5rem 0.5rem;
+    }
+
+    .meeting-list {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .meeting-item {
+        padding: 1rem;
+    }
+
+    .meeting-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+
+    .btn-submit, .btn-add-agenda {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .modal-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}

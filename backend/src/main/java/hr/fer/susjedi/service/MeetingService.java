@@ -115,7 +115,7 @@ public class MeetingService {
                 .map(a -> a.getUser().getUsername())
                 .collect(Collectors.toList()));
 
-        dto.setCurrentUserAttending(false); // default
+        dto.setCurrentUserAttending(false);
 
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();

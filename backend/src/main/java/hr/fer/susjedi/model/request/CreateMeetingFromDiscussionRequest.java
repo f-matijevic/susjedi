@@ -8,7 +8,7 @@ public class CreateMeetingFromDiscussionRequest {
     private String naslov;
 
     @JsonProperty("termin")
-    private String termin;  // ISO 8601 format: "2026-02-10T16:00:00Z"
+    private String termin;
 
     @JsonProperty("tocka_dnevnog_reda")
     private String tockaDnevnogReda;
